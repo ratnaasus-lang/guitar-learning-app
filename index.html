@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MelodyGuitar</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:#101827;
+ color:white;
+ padding:22px;
+}
+header{display:flex;justify-content:space-between;align-items:center}
+h1{color:#65e6b5}
+.card{
+ background:#202e42;
+ padding:20px;
+ border-radius:18px;
+ margin-top:20px;
+}
+button{
+ background:#65e6b5;
+ color:#102030;
+ border:0;
+ padding:13px 20px;
+ border-radius:12px;
+ font-weight:bold;
+ margin:5px;
+}
+select{
+ padding:12px;
+ border-radius:10px;
+ width:100%;
+ margin-top:10px;
+}
+.tab{
+ font-family:monospace;
+ white-space:pre;
+ overflow-x:auto;
+ background:#101827;
+ padding:15px;
+ border-radius:10px;
+ line-height:1.8;
+}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🎸 MelodyGuitar</h1>
+<span>LEARN • PLAY • GROW</span>
+</header>
+
+<div class="card">
+<h2>Welcome Guitarist!</h2>
+<p>Belajar fingerstyle dengan cara yang menyenangkan.</p>
+<h3>Pilih Lagu</h3>
+<select id="song">
+<option value="canon">Canon in D</option>
+<option value="romantic">Romantic Melody</option>
+<option value="beginner">Easy Fingerstyle</option>
+</select>
+</div>
+
+<div class="card">
+<h2 id="lesson">Canon in D</h2>
+<p>Level: Intermediate</p>
+<h3>Guitar TAB</h3>
+<div class="tab" id="tab">
+e|-------0-------|
+B|-----1---1-----|
+G|---0-------0---|
+D|-2-------------|
+A|---------------|
+E|---------------|
+</div>
+<button onclick="play()">▶ Play</button>
+<button onclick="stop()">■ Stop</button>
+<p id="status">Ready to practice!</p>
+</div>
+
+<div class="card">
+<h3>Practice Tempo</h3>
+<input type="range" min="40" max="160" value="80"
+id="tempo" oninput="speed()">
+<p id="speed">80 BPM</p>
+</div>
+
+<script>
+let timer;
+let notes=[392,440,494,523,587,659,698,784];
+let index=0;
+
+function play(){
+ stop();
+ document.getElementById("status").innerText="Playing lesson...";
+ timer=setInterval(()=>{
+ let audio=new AudioContext();
+ let osc=audio.createOscillator();
+ let gain=audio.createGain();
+ osc.frequency.value=notes[index%notes.length];
+ gain.gain.value=0.12;
+ osc.connect(gain);
+ gain.connect(audio.destination);
+ osc.start();
+ osc.stop(audio.currentTime+0.3);
+ index++;
+ },60000/Number(document.getElementById("tempo").value));
+}
+
+function stop(){
+ clearInterval(timer);
+ document.getElementById("status").innerText="Practice paused.";
+}
+
+function speed(){
+ document.getElementById("speed").innerText=
+ document.getElementById("tempo").value+" BPM";
+}
+
+document.getElementById("song").onchange=function(){
+ document.getElementById("lesson").innerText=
+ this.options[this.selectedIndex].text;
+};
+</script>
+
+</body>
+</html>
