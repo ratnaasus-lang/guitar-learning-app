@@ -1,0 +1,616 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#10151e">
+<title>MelodyGuitar 4.0</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;padding:18px;background:#10151e;
+ color:#f4f5f7;font-family:Arial,sans-serif
+}
+header{display:flex;justify-content:space-between;align-items:center}
+h1{color:#64e6b4;font-size:25px}
+h2{font-size:20px}
+small{color:#9daaba}
+.card{
+ background:#1b2635;border:1px solid #304052;
+ padding:18px;border-radius:17px;margin:17px 0
+}
+select,button{
+ padding:12px;border:0;border-radius:10px;font-size:14px
+}
+select{
+ width:100%;margin:10px 0;
+ background:#29384a;color:white
+}
+button{
+ background:#64e6b4;color:#102019;
+ font-weight:bold;cursor:pointer
+}
+button.secondary{background:#34465b;color:white}
+.controls{display:flex;gap:8px;flex-wrap:wrap}
+.controls button{flex:1}
+.stat{display:flex;justify-content:space-between;gap:10px}
+.progress{
+ height:7px;background:#34465b;border-radius:10px;
+ overflow:hidden;margin:12px 0
+}
+#bar{height:100%;width:0%;background:#64e6b4}
+.tab-wrap{
+ overflow-x:auto;background:#10151e;
+ padding:12px;border-radius:12px
+}
+#tab{
+ white-space:pre;font-family:monospace;
+ font-size:14px;line-height:1.9;color:#c7d6e5
+}
+.tab-current{
+ color:#64e6b4;background:#34465b;
+ font-weight:bold;border-radius:3px
+}
+.guitar-scroll{overflow-x:auto;padding-bottom:10px}
+#frets{
+ min-width:620px;display:flex;
+ flex-direction:column;gap:7px
+}
+.string-row{
+ display:grid;grid-template-columns:30px repeat(13,42px);
+ gap:3px;align-items:center
+}
+.string-name{
+ color:#64e6b4;font-weight:bold;text-align:center
+}
+.fret{
+ height:38px;padding:2px;background:#34465b;
+ color:white;border:1px solid #53667c;
+ border-radius:5px;font-size:12px
+}
+.fret.selected{
+ background:#64e6b4;color:#102019;
+ outline:2px solid white
+}
+input[type=range]{width:100%;accent-color:#64e6b4}
+.note-display{
+ color:#64e6b4;font-size:20px;font-weight:bold
+}
+footer{text-align:center;color:#8494a7;padding:25px;font-size:12px}
+</style>
+</head>
+
+<body>
+
+<header>
+ <div>
+  <h1>🎸 MelodyGuitar</h1>
+  <small>LEARN • PLAY • MASTER</small>
+ </div>
+ <b>4.0</b>
+</header>
+
+<div class="card">
+ <small>YOUR MUSIC JOURNEY</small>
+ <h2>Welcome, Guitarist!</h2>
+ <p>Learn beautiful fingerstyle guitar melodies.</p>
+ <div class="stat">
+  <span>Total notes played</span>
+  <b id="count">0</b>
+ </div>
+</div>
+
+<div class="card">
+ <small>LESSON LIBRARY</small>
+ <h2>Choose your song</h2>
+ <select id="song">
+  <option value="canon">Canon in D - Pachelbel</option>
+  <option value="romantic">Romantic Melody - Original</option>
+  <option value="easy">Easy Fingerstyle - Original</option>
+ </select>
+ <p id="level">Intermediate • Fingerstyle</p>
+</div>
+
+<div class="card">
+ <small>INTERACTIVE LESSON</small>
+ <h2 id="songTitle">Canon in D</h2>
+
+ <div class="stat">
+  <span>Current note</span>
+  <span class="note-display" id="noteInfo">Ready</span>
+ </div>
+
+ <div class="progress">
+  <div id="bar"></div>
+ </div>
+
+ <h3>Six-string Guitar TAB</h3>
+ <div class="tab-wrap">
+  <div id="tab"></div>
+ </div>
+
+ <div class="controls" style="margin-top:15px">
+  <button onclick="play()">▶ PLAY</button>
+  <button class="secondary" onclick="pause()">Ⅱ PAUSE</button>
+  <button class="secondary" onclick="reset()">↺ RESET</button>
+ </div>
+</div>
+
+<div class="card">
+ <small>VIRTUAL GUITAR</small>
+ <h2>Play the Guitar</h2>
+ <p>Sentuh angka fret untuk memainkan nada.</p>
+
+ <div class="guitar-scroll">
+  <div id="frets"></div>
+ </div>
+
+ <p id="fretInfo" class="note-display">
+  Select a string and fret
+ </p>
+
+ <small>
+ Standard tuning: E A D G B E
+ (senar 6 sampai senar 1)
+ </small>
+</div>
+
+<div class="card">
+ <small>PRACTICE SETTINGS</small>
+ <h2>Tempo Control</h2>
+ <div class="stat">
+  <span>Practice speed</span>
+  <b id="bpm">80 BPM</b>
+ </div>
+
+ <input type="range" min="40" max="160"
+ value="80" id="tempo" oninput="changeTempo()">
+
+ <div class="controls">
+  <button class="secondary" onclick="changeBpm(-5)">− 5 BPM</button>
+  <button class="secondary" onclick="changeBpm(5)">+ 5 BPM</button>
+ </div>
+</div>
+
+<div class="card">
+ <small>YOUR PROGRESS</small>
+ <h2>Practice Tracker</h2>
+ <p id="progressText">Start your first lesson!</p>
+</div>
+
+<footer>
+ MelodyGuitar 4.0 · Made for Guitar Lovers ❤️
+</footer>
+
+<script>
+
+// =================================
+// 1. GUITAR TUNING
+// =================================
+
+// Urutan senar 6 ke senar 1
+
+const strings = [
+ {name:"E",midi:40},
+ {name:"A",midi:45},
+ {name:"D",midi:50},
+ {name:"G",midi:55},
+ {name:"B",midi:59},
+ {name:"e",midi:64}
+];
+
+const noteNames=[
+ "C","C#","D","D#","E","F",
+ "F#","G","G#","A","A#","B"
+];
+
+function getNote(midi){
+ return noteNames[midi%12]+
+ (Math.floor(midi/12)-1);
+}
+
+// =================================
+// 2. SONG DATA
+// =================================
+
+// s = nomor senar (0 = senar 6)
+// f = nomor fret
+
+const songs={
+
+ canon:{
+  title:"Canon in D - Pachelbel",
+  level:"Intermediate • Canon Melody",
+
+  events:[
+   {s:5,f:2},{s:5,f:0},{s:4,f:3},{s:4,f:2},
+   {s:4,f:0},{s:3,f:2},{s:4,f:0},{s:4,f:2},
+   {s:4,f:3},{s:5,f:0},{s:4,f:3},{s:4,f:2},
+   {s:4,f:0},{s:3,f:2},{s:4,f:0},{s:4,f:2},
+   {s:5,f:2},{s:5,f:0},{s:4,f:3},{s:4,f:2},
+   {s:4,f:0},{s:3,f:2},{s:4,f:0},{s:4,f:2}
+  ]
+ },
+
+ romantic:{
+  title:"Romantic Melody",
+  level:"Intermediate • Original",
+
+  events:[
+   {s:5,f:0},{s:5,f:2},{s:5,f:3},{s:5,f:5},
+   {s:4,f:3},{s:4,f:2},{s:5,f:3},{s:5,f:2},
+   {s:5,f:0},{s:4,f:3},{s:4,f:2},{s:4,f:0},
+   {s:5,f:2},{s:5,f:3},{s:5,f:5},{s:5,f:3},
+   {s:5,f:7},{s:5,f:5},{s:5,f:3},{s:5,f:2},
+   {s:4,f:3},{s:4,f:2},{s:5,f:0},{s:5,f:2}
+  ]
+ },
+
+ easy:{
+  title:"Easy Fingerstyle",
+  level:"Beginner • Original",
+
+  events:[
+   {s:5,f:0},{s:5,f:2},{s:5,f:3},{s:5,f:2},
+   {s:4,f:0},{s:4,f:2},{s:4,f:3},{s:4,f:2},
+   {s:5,f:0},{s:5,f:3},{s:5,f:5},{s:5,f:3},
+   {s:4,f:2},{s:4,f:0},{s:5,f:2},{s:5,f:0},
+   {s:5,f:3},{s:5,f:5},{s:5,f:3},{s:5,f:2}
+  ]
+ }
+
+};
+
+// =================================
+// 3. APPLICATION STATE
+// =================================
+
+let song=songs.canon;
+let index=0;
+let timer=null;
+let playing=false;
+let total=0;
+let audio=null;
+
+function initAudio(){
+
+ const AudioContextClass=
+ window.AudioContext||window.webkitAudioContext;
+
+ if(!AudioContextClass)return false;
+
+ if(!audio)audio=new AudioContextClass();
+
+ if(audio.state==="suspended"){
+  audio.resume();
+ }
+
+ return true;
+}
+
+// =================================
+// 4. GUITAR SOUND
+// =================================
+
+function sound(midi){
+
+ if(!initAudio())return;
+
+ const now=audio.currentTime;
+ const frequency=440*Math.pow(2,(midi-69)/12);
+
+ const osc=audio.createOscillator();
+ const harmonic=audio.createOscillator();
+
+ const gain=audio.createGain();
+ const harmonicGain=audio.createGain();
+
+ osc.type="triangle";
+ osc.frequency.value=frequency;
+
+ harmonic.type="sine";
+ harmonic.frequency.value=frequency*2;
+
+ gain.gain.setValueAtTime(0.0001,now);
+ gain.gain.exponentialRampToValueAtTime(0.17,now+0.015);
+ gain.gain.exponentialRampToValueAtTime(0.0001,now+0.75);
+
+ harmonicGain.gain.setValueAtTime(0.0001,now);
+ harmonicGain.gain.exponentialRampToValueAtTime(0.025,now+0.015);
+ harmonicGain.gain.exponentialRampToValueAtTime(0.0001,now+0.3);
+
+ osc.connect(gain);
+ gain.connect(audio.destination);
+
+ harmonic.connect(harmonicGain);
+ harmonicGain.connect(audio.destination);
+
+ osc.start(now);
+ harmonic.start(now);
+
+ osc.stop(now+0.8);
+ harmonic.stop(now+0.35);
+}
+
+// =================================
+// 5. SIX STRING FRETBOARD
+// =================================
+
+const board=document.getElementById("frets");
+
+function createFretboard(){
+
+ board.innerHTML="";
+
+ strings.forEach((string,s)=>{
+
+  const row=document.createElement("div");
+  row.className="string-row";
+
+  const label=document.createElement("div");
+  label.className="string-name";
+  label.textContent=string.name;
+
+  row.appendChild(label);
+
+  for(let fret=0;fret<=12;fret++){
+
+   const btn=document.createElement("button");
+   btn.className="fret";
+   btn.textContent=fret;
+
+   btn.dataset.string=s;
+   btn.dataset.fret=fret;
+
+   btn.onclick=()=>{
+
+    pause();
+
+    highlightFret(s,fret);
+
+    const midi=string.midi+fret;
+
+    sound(midi);
+
+    document.getElementById("fretInfo").textContent=
+     "String "+string.name+
+     " • Fret "+fret+
+     " • "+getNote(midi);
+   };
+
+   row.appendChild(btn);
+  }
+
+  board.appendChild(row);
+ });
+}
+
+// =================================
+// 6. HIGHLIGHT FRET
+// =================================
+
+function highlightFret(s,f){
+
+ document.querySelectorAll(".fret").forEach(btn=>{
+  btn.classList.remove("selected");
+ });
+
+ const selected=document.querySelector(
+  '.fret[data-string="'+s+'"][data-fret="'+f+'"]'
+ );
+
+ if(selected)selected.classList.add("selected");
+}
+
+// =================================
+// 7. GENERATE TAB FROM SONG DATA
+// =================================
+
+function renderTab(current=-1){
+
+ const displayStrings=[
+  {name:"e",s:5},
+  {name:"B",s:4},
+  {name:"G",s:3},
+  {name:"D",s:2},
+  {name:"A",s:1},
+  {name:"E",s:0}
+ ];
+
+ let output="";
+
+ displayStrings.forEach(row=>{
+
+  let line=row.name+"|";
+
+  song.events.forEach((event,i)=>{
+
+   let cell=event.s===row.s?
+    String(event.f).padEnd(4," "):
+    "----";
+
+   if(i===current){
+    line+='<span class="tab-current">'+cell+'</span>';
+   }else{
+    line+=cell;
+   }
+  });
+
+  output+=line+"|\n";
+ });
+
+ document.getElementById("tab").innerHTML=output;
+}
+
+// =================================
+// 8. DISPLAY SONG
+// =================================
+
+function render(){
+
+ document.getElementById("songTitle").textContent=song.title;
+ document.getElementById("level").textContent=song.level;
+
+ document.getElementById("noteInfo").textContent="Ready";
+ document.getElementById("fretInfo").textContent="Select a string and fret";
+
+ document.getElementById("bar").style.width="0%";
+ document.getElementById("progressText").textContent="Start practicing!";
+
+ renderTab();
+
+ document.querySelectorAll(".fret").forEach(btn=>{
+  btn.classList.remove("selected");
+ });
+}
+
+// =================================
+// 9. PLAYBACK
+// =================================
+
+function play(){
+
+ if(playing)return;
+
+ if(index>=song.events.length)index=0;
+
+ if(!initAudio())return;
+
+ playing=true;
+
+ function next(){
+
+  if(!playing)return;
+
+  if(index>=song.events.length){
+
+   pause();
+
+   document.getElementById("progressText").textContent=
+    "Lesson completed! Great job! 🎉";
+
+   document.getElementById("bar").style.width="100%";
+
+   renderTab(-1);
+   return;
+  }
+
+  const current=index;
+  const event=song.events[current];
+
+  const string=strings[event.s];
+  const midi=string.midi+event.f;
+
+  sound(midi);
+
+  highlightFret(event.s,event.f);
+  renderTab(current);
+
+  document.getElementById("noteInfo").textContent=getNote(midi);
+
+  document.getElementById("fretInfo").textContent=
+   "String "+string.name+
+   " • Fret "+event.f+
+   " • "+getNote(midi);
+
+  index++;
+  total++;
+
+  document.getElementById("count").textContent=total;
+
+  document.getElementById("bar").style.width=
+   (index/song.events.length*100)+"%";
+
+  document.getElementById("progressText").textContent=
+   "Completed "+index+" / "+song.events.length+" notes";
+
+  timer=setTimeout(
+   next,
+   60000/Number(document.getElementById("tempo").value)
+  );
+ }
+
+ next();
+}
+
+// =================================
+// 10. PAUSE AND RESET
+// =================================
+
+function pause(){
+
+ playing=false;
+ clearTimeout(timer);
+}
+
+function reset(){
+
+ pause();
+
+ index=0;
+
+ document.getElementById("noteInfo").textContent="Ready";
+ document.getElementById("bar").style.width="0%";
+ document.getElementById("progressText").textContent="Start practicing!";
+
+ renderTab(-1);
+
+ document.querySelectorAll(".fret").forEach(btn=>{
+  btn.classList.remove("selected");
+ });
+}
+
+// =================================
+// 11. TEMPO
+// =================================
+
+function changeTempo(){
+
+ document.getElementById("bpm").textContent=
+  document.getElementById("tempo").value+" BPM";
+
+ if(playing){
+  pause();
+  play();
+ }
+}
+
+function changeBpm(value){
+
+ const tempo=document.getElementById("tempo");
+
+ tempo.value=Math.max(
+  40,
+  Math.min(160,Number(tempo.value)+value)
+ );
+
+ changeTempo();
+}
+
+// =================================
+// 12. CHANGE SONG
+// =================================
+
+document.getElementById("song").onchange=function(){
+
+ pause();
+
+ index=0;
+
+ song=songs[this.value];
+
+ render();
+};
+
+// =================================
+// 13. START
+// =================================
+
+createFretboard();
+render();
+
+</script>
+</body>
+</html>
