@@ -3,582 +3,734 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#10151e">
-<title>MelodyGuitar 5.0</title>
+<title>MelodyGuitar 6.0</title>
+
 <style>
+:root {
+  --bg:#10151e;
+  --panel:#192331;
+  --panel2:#202d3d;
+  --green:#35e69a;
+  --gold:#ffbd59;
+  --text:#f3f6fa;
+  --muted:#9aaabd;
+  --line:#526276;
+}
 *{box-sizing:border-box}
 body{
- margin:0;padding:16px;background:#10151e;color:#f4f5f7;
- font-family:Arial,sans-serif
+  margin:0;
+  padding:16px;
+  background:linear-gradient(145deg,#10151e,#172638);
+  color:var(--text);
+  font-family:Arial,sans-serif;
 }
-header{display:flex;justify-content:space-between;align-items:center}
-h1{color:#64e6b4;font-size:25px}
-h2{font-size:20px}
-small{color:#9daaba}
-.card{
- background:#1b2635;border:1px solid #304052;
- padding:17px;border-radius:16px;margin:16px 0
+.app{max-width:1050px;margin:auto}
+header{
+  display:flex;justify-content:space-between;
+  align-items:center;gap:12px;margin-bottom:18px;
 }
-select,button{
- padding:12px;border:0;border-radius:9px;font-size:14px
+h1{font-size:23px;margin:0}
+h1 span{color:var(--green)}
+.subtitle{color:var(--muted);font-size:12px;margin-top:5px}
+.version{
+  background:#244536;color:var(--green);
+  padding:7px 10px;border-radius:20px;font-size:12px;
 }
-select{width:100%;margin:10px 0;background:#29384a;color:white}
-button{background:#64e6b4;color:#102019;font-weight:bold}
-button.secondary{background:#34465b;color:white}
-.controls{display:flex;gap:8px;flex-wrap:wrap}
-.controls button{flex:1}
-.stat{display:flex;justify-content:space-between;gap:10px}
-.note-display{color:#64e6b4;font-size:20px;font-weight:bold}
-.progress{height:7px;background:#34465b;border-radius:10px;overflow:hidden;margin:12px 0}
-#bar{height:100%;width:0;background:#64e6b4}
-.tab-wrap{overflow-x:auto;background:#10151e;padding:12px;border-radius:12px}
-#tab{font:13px monospace;white-space:pre;line-height:2;color:#c7d6e5}
-.tab-current{color:#64e6b4;background:#34465b;font-weight:bold}
-.legend{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0;font-size:12px}
-.legend b{color:#64e6b4}
-.guitar-scroll{overflow-x:auto;padding-bottom:10px}
-#frets{min-width:620px;display:flex;flex-direction:column;gap:7px}
-.string-row{display:grid;grid-template-columns:30px repeat(13,42px);gap:3px;align-items:center}
-.string-name{text-align:center;color:#64e6b4;font-weight:bold}
-.fret{height:38px;padding:2px;background:#34465b;color:white;border:1px solid #53667c;border-radius:5px;font-size:12px}
-.fret.selected{background:#64e6b4;color:#102019;outline:2px solid white}
-.fret.bass-selected{background:#e9ad54;color:#201608;outline:2px solid white}
-input[type=range]{width:100%;accent-color:#64e6b4}
-footer{text-align:center;color:#8494a7;padding:24px;font-size:12px}
+.panel{
+  background:rgba(25,35,49,.96);
+  border:1px solid #304155;
+  border-radius:15px;padding:15px;margin-bottom:15px;
+}
+h2{font-size:16px;margin:0 0 13px}
+label{font-size:12px;color:var(--muted)}
+select,input,button{
+  font:inherit;border-radius:9px;
+}
+select{
+  width:100%;padding:12px;background:var(--panel2);
+  color:white;border:1px solid #45576c;margin-top:6px;
+}
+.controls{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.tempo-line{
+  display:flex;justify-content:space-between;
+  margin:14px 0 7px;font-size:13px;
+}
+input[type=range]{width:100%;accent-color:var(--green)}
+.buttons{
+  display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;
+}
+button{
+  border:0;padding:11px 15px;
+  background:var(--panel2);color:white;
+  cursor:pointer;font-weight:bold;
+}
+button.primary{background:var(--green);color:#10251c}
+button.gold{background:var(--gold);color:#34230c}
+button:disabled{opacity:.4}
+.status{
+  color:var(--green);font-size:13px;
+  margin-top:12px;min-height:18px;
+}
+.fret-wrap{overflow-x:auto;padding-bottom:8px}
+.fretboard{
+  min-width:690px;
+  position:relative;
+  padding-top:24px;
+}
+.fret-numbers{
+  display:grid;grid-template-columns:42px repeat(13,1fr);
+  font-size:10px;color:var(--muted);
+  text-align:center;margin-bottom:7px;
+}
+.string-row{
+  display:grid;
+  grid-template-columns:42px repeat(13,1fr);
+  align-items:center;height:42px;position:relative;
+}
+.string-row:after{
+  content:"";position:absolute;left:42px;right:0;
+  height:2px;background:#a5aeb9;z-index:0;
+}
+.string-name{
+  color:var(--gold);font-weight:bold;font-size:13px;
+}
+.fret-cell{
+  z-index:1;height:34px;display:flex;
+  align-items:center;justify-content:center;
+  border-right:1px solid #617187;
+  position:relative;
+}
+.fret-cell button{
+  padding:0;width:27px;height:27px;
+  border-radius:50%;font-size:10px;
+  background:transparent;color:transparent;
+}
+.fret-cell button.active{
+  background:var(--green);color:#09251a;
+  box-shadow:0 0 12px #35e69a88;
+}
+.fret-cell button.bass{
+  background:var(--gold);color:#30200b;
+  box-shadow:0 0 12px #ffbd5988;
+}
+.fret-cell button:active{transform:scale(.9)}
+.legend{
+  display:flex;gap:16px;flex-wrap:wrap;
+  color:var(--muted);font-size:11px;margin-top:12px;
+}
+.dot{display:inline-block;width:9px;height:9px;
+  border-radius:50%;margin-right:5px}
+.green{background:var(--green)}
+.yellow{background:var(--gold)}
+.tab-scroll{overflow-x:auto}
+.tab-grid{
+  min-width:650px;display:grid;
+  grid-template-columns:34px repeat(8,minmax(48px,1fr));
+  gap:3px;font-family:monospace;
+}
+.tab-cell{
+  background:#202d3d;padding:8px 2px;
+  text-align:center;border-radius:5px;
+  font-size:12px;color:#dce5ef;
+}
+.tab-cell.current{
+  outline:2px solid var(--green);
+  color:var(--green);background:#214333;
+}
+.tab-string{
+  color:var(--gold);font-weight:bold;
+  display:flex;align-items:center;
+}
+.finger-row{
+  display:flex;gap:7px;flex-wrap:wrap;margin-top:12px;
+}
+.finger{
+  padding:7px 10px;background:#29394b;
+  border-radius:8px;font-size:12px;
+}
+.finger strong{color:var(--green)}
+.info{
+  color:var(--muted);font-size:12px;
+  line-height:1.6;
+}
+.progress{
+  height:6px;background:#344357;
+  border-radius:9px;overflow:hidden;margin-top:12px;
+}
+.progress div{
+  height:100%;width:0;background:var(--green);
+  transition:width .1s;
+}
+footer{text-align:center;color:var(--muted);
+  font-size:11px;padding:15px}
+@media(max-width:550px){
+  body{padding:10px}
+  h1{font-size:20px}
+  .panel{padding:12px}
+  .controls{grid-template-columns:1fr}
+  button{padding:10px 12px}
+}
 </style>
 </head>
+
 <body>
+<div class="app">
 
 <header>
- <div>
-  <h1>🎸 MelodyGuitar</h1>
-  <small>LEARN • PLAY • MASTER</small>
- </div>
- <b>5.0</b>
+  <div>
+    <h1>🎸 Melody<span>Guitar</span></h1>
+    <div class="subtitle">Interactive Fingerstyle Guitar Studio</div>
+  </div>
+  <div class="version">VERSION 6.0</div>
 </header>
 
-<div class="card">
- <small>YOUR MUSIC JOURNEY</small>
- <h2>Fingerstyle Guitar Studio</h2>
- <p>Bass, harmony and melody played together.</p>
- <div class="stat"><span>Total notes played</span><b id="count">0</b></div>
+<section class="panel">
+  <h2>🎵 Pilih Lagu</h2>
+  <div class="controls">
+    <div>
+      <label for="songSelect">Song</label>
+      <select id="songSelect">
+        <option value="canon">Canon in D – Practice Arrangement</option>
+        <option value="romantic">Romantic Fingerstyle – Original</option>
+        <option value="easy">Easy Fingerstyle – Original</option>
+      </select>
+    </div>
+    <div>
+      <label for="modeSelect">Playing Mode</label>
+      <select id="modeSelect">
+        <option value="fingerstyle">Fingerstyle – Bass + Melody</option>
+        <option value="melody">Melody Only</option>
+        <option value="bass">Bass + Harmony</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="tempo-line">
+    <label for="tempo">Tempo</label>
+    <strong><span id="tempoValue">75</span> BPM</strong>
+  </div>
+  <input id="tempo" type="range" min="35" max="150" value="75">
+
+  <div class="buttons">
+    <button class="primary" id="playBtn">▶ PLAY</button>
+    <button id="pauseBtn">Ⅱ PAUSE</button>
+    <button id="resetBtn">↺ RESET</button>
+    <button class="gold" id="slowBtn">🐢 SLOW PRACTICE</button>
+    <button id="repeatBtn">↻ AUTO REPEAT: OFF</button>
+  </div>
+
+  <div class="status" id="status">Siap dimainkan. Tekan PLAY.</div>
+  <div class="progress"><div id="progressBar"></div></div>
+</section>
+
+<section class="panel">
+  <h2>🎸 Interactive Fretboard</h2>
+  <div class="fret-wrap">
+    <div class="fretboard" id="fretboard"></div>
+  </div>
+  <div class="legend">
+    <span><i class="dot yellow"></i>Bass note</span>
+    <span><i class="dot green"></i>Melody / Harmony</span>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>📖 Guitar TAB</h2>
+  <div class="info" id="songDescription"></div>
+  <div class="tab-scroll">
+    <div id="tabContent"></div>
+  </div>
+  <div class="finger-row" id="fingerInfo"></div>
+</section>
+
+<section class="panel">
+  <h2>🎚️ Sound Settings</h2>
+  <div class="controls">
+    <div>
+      <div class="tempo-line">
+        <label for="volume">Master Volume</label>
+        <strong id="volumeValue">75%</strong>
+      </div>
+      <input id="volume" type="range" min="10" max="100" value="75">
+    </div>
+    <div>
+      <div class="tempo-line">
+        <label for="melodyVolume">Melody Emphasis</label>
+        <strong id="melodyValue">85%</strong>
+      </div>
+      <input id="melodyVolume" type="range" min="20" max="100" value="85">
+    </div>
+  </div>
+  <p class="info">
+    Suara menggunakan simulasi getaran senar Karplus–Strong.
+    Gunakan headphone untuk mendengar detail petikan.
+  </p>
+</section>
+
+<footer>
+  MelodyGuitar 6.0 · Realistic Acoustic Simulation
+</footer>
 </div>
-
-<div class="card">
- <small>LESSON LIBRARY</small>
- <h2>Choose your song</h2>
- <select id="song">
-  <option value="canon">Canon in D - Pachelbel</option>
-  <option value="romantic">Romantic Fingerstyle - Original</option>
-  <option value="easy">Easy Fingerstyle - Original</option>
- </select>
- <p id="level">Intermediate • Fingerstyle</p>
-</div>
-
-<div class="card">
- <small>FINGERSTYLE LESSON</small>
- <h2 id="songTitle">Canon in D</h2>
-
- <div class="stat">
-  <span>Current chord / notes</span>
-  <span id="noteInfo" class="note-display">Ready</span>
- </div>
-
- <div class="progress"><div id="bar"></div></div>
-
- <div class="legend">
-  <span><b>P</b> = Thumb / Bass</span>
-  <span><b>I</b> = Index</span>
-  <span><b>M</b> = Middle</span>
-  <span><b>A</b> = Ring</span>
- </div>
-
- <h3>Fingerstyle TAB</h3>
- <small>Setiap kolom adalah satu ketukan. Angka yang sama pada satu kolom dimainkan bersamaan.</small>
- <div class="tab-wrap"><div id="tab"></div></div>
-
- <div class="controls" style="margin-top:15px">
-  <button onclick="play()">▶ PLAY</button>
-  <button class="secondary" onclick="pause()">Ⅱ PAUSE</button>
-  <button class="secondary" onclick="reset()">↺ RESET</button>
- </div>
-</div>
-
-<div class="card">
- <small>VIRTUAL GUITAR</small>
- <h2>Six String Fretboard</h2>
- <p>Posisi fret aktif akan disorot bersamaan.</p>
- <div class="guitar-scroll"><div id="frets"></div></div>
- <p id="fretInfo" class="note-display">Select a fret</p>
- <small>Standard tuning: E A D G B E (senar 6 ke senar 1)</small>
-</div>
-
-<div class="card">
- <small>PRACTICE SETTINGS</small>
- <h2>Tempo Control</h2>
- <div class="stat"><span>Practice speed</span><b id="bpm">80 BPM</b></div>
- <input type="range" min="40" max="160" value="80" id="tempo" oninput="changeTempo()">
- <div class="controls">
-  <button class="secondary" onclick="changeBpm(-5)">− 5 BPM</button>
-  <button class="secondary" onclick="changeBpm(5)">+ 5 BPM</button>
- </div>
-</div>
-
-<div class="card">
- <small>PRACTICE TRACKER</small>
- <h2>Your Progress</h2>
- <p id="progressText">Start your first lesson!</p>
-</div>
-
-<footer>MelodyGuitar 5.0 · Fingerstyle Studio ❤️</footer>
 
 <script>
+// ============================================
+// 1. AUDIO ENGINE
+// ============================================
 
-// =================================
-// 1. GUITAR TUNING
-// =================================
+let audioContext=null;
+let masterGain=null;
+let isPlaying=false;
+let repeat=false;
+let slowMode=false;
+let currentIndex=0;
+let timer=null;
+let generation=0;
 
-const strings=[
- {name:"E",midi:40},
- {name:"A",midi:45},
- {name:"D",midi:50},
- {name:"G",midi:55},
- {name:"B",midi:59},
- {name:"e",midi:64}
+const tuning=[
+  {name:"E",midi:40},
+  {name:"A",midi:45},
+  {name:"D",midi:50},
+  {name:"G",midi:55},
+  {name:"B",midi:59},
+  {name:"e",midi:64}
 ];
 
-const names=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
-
-function getNote(m){
- return names[m%12]+(Math.floor(m/12)-1);
+function initAudio(){
+  if(!audioContext){
+    const AudioCtx=window.AudioContext||window.webkitAudioContext;
+    if(!AudioCtx){
+      alert("Browser tidak mendukung Web Audio API.");
+      return false;
+    }
+    audioContext=new AudioCtx();
+    masterGain=audioContext.createGain();
+    masterGain.gain.value=.75;
+    masterGain.connect(audioContext.destination);
+  }
+  if(audioContext.state==="suspended")audioContext.resume();
+  return true;
 }
 
-// =================================
-// 2. SONG ARRANGEMENTS
-// =================================
+function createPluckBuffer(frequency,duration,brightness){
+  const rate=audioContext.sampleRate;
+  const period=Math.max(2,Math.round(rate/frequency));
+  const length=Math.floor(rate*duration);
+  const data=new Float32Array(length);
 
-// Format:
-// {s: string, f: fret, finger: P/I/M/A, role: bass/melody/harmony}
-// Semua notes dalam satu event dimainkan BERSAMA.
+  // Initial string excitation
+  for(let i=0;i<period;i++){
+    const noise=Math.random()*2-1;
+    const position=i/period;
+    data[i]=noise*(.55+.45*Math.sin(Math.PI*position));
+  }
+
+  // Karplus-Strong feedback
+  const damping=brightness;
+  for(let i=period;i<length;i++){
+    const a=data[i-period];
+    const b=data[i-period+1]||0;
+    data[i]=(a+b)*.5*damping;
+  }
+
+  const buffer=audioContext.createBuffer(1,length,rate);
+  buffer.copyToChannel(data,0);
+  return buffer;
+}
+
+function playString(note,startTime){
+  const mode=document.getElementById("modeSelect").value;
+  if(mode==="melody"&&note.role==="bass")return;
+  if(mode==="bass"&&note.role==="melody")return;
+
+  const midi=tuning[note.s].midi+note.f;
+  const frequency=440*Math.pow(2,(midi-69)/12);
+
+  const isBass=note.role==="bass";
+  const isMelody=note.role==="melody";
+  const duration=isBass?2.6:2.0;
+  const brightness=isBass?.99965:.99935;
+
+  const source=audioContext.createBufferSource();
+  source.buffer=createPluckBuffer(frequency,duration,brightness);
+
+  const highpass=audioContext.createBiquadFilter();
+  highpass.type="highpass";
+  highpass.frequency.value=isBass?45:75;
+
+  const body=audioContext.createBiquadFilter();
+  body.type="peaking";
+  body.frequency.value=isBass?145:210;
+  body.Q.value=.85;
+  body.gain.value=isBass?3.5:2;
+
+  const lowpass=audioContext.createBiquadFilter();
+  lowpass.type="lowpass";
+  lowpass.frequency.value=isBass?3500:6500;
+
+  const gain=audioContext.createGain();
+  const master=Number(document.getElementById("volume").value)/100;
+  const melodyLevel=Number(document.getElementById("melodyVolume").value)/100;
+
+  let level=isBass?.65:(isMelody?.68:.42);
+  if(isMelody)level*=melodyLevel;
+
+  const now=startTime;
+  gain.gain.setValueAtTime(.0001,now);
+  gain.gain.exponentialRampToValueAtTime(
+    Math.max(.0002,level*master),now+.015
+  );
+  gain.gain.setTargetAtTime(.0001,now+.09,isBass?.75:.52);
+
+  const pan=audioContext.createStereoPanner();
+  pan.pan.value=isBass?-.16:(isMelody?.16:0);
+
+  source.connect(highpass);
+  highpass.connect(body);
+  body.connect(lowpass);
+  lowpass.connect(gain);
+  gain.connect(pan);
+  pan.connect(masterGain);
+
+  source.start(now);
+  source.stop(now+duration);
+}
+
+function playEvent(event){
+  if(!initAudio())return;
+  const start=audioContext.currentTime+.025;
+  event.notes.forEach(note=>playString(note,start));
+}
+
+// ============================================
+// 2. SONG DATA
+// ============================================
+
+const N=(s,f,role,finger)=>({s,f,role,finger});
+const E=(...notes)=>({notes});
 
 const songs={
-
 canon:{
- title:"Canon in D - Pachelbel",
- level:"Intermediate • Fingerstyle",
- events:[
-  // D major
-  [{s:2,f:0,finger:"P",role:"bass"},{s:3,f:2,finger:"I",role:"harmony"},{s:4,f:3,finger:"M",role:"harmony"},{s:5,f:2,finger:"A",role:"melody"}],
-  [{s:2,f:0,finger:"P",role:"bass"},{s:3,f:2,finger:"I",role:"harmony"},{s:4,f:3,finger:"M",role:"harmony"},{s:5,f:0,finger:"A",role:"melody"}],
-  [{s:2,f:0,finger:"P",role:"bass"},{s:3,f:2,finger:"I",role:"harmony"},{s:4,f:3,finger:"M",role:"harmony"},{s:5,f:2,finger:"A",role:"melody"}],
-  [{s:2,f:0,finger:"P",role:"bass"},{s:3,f:2,finger:"I",role:"harmony"},{s:4,f:3,finger:"M",role:"harmony"},{s:5,f:5,finger:"A",role:"melody"}],
-
-  // A major
-  [{s:1,f:0,finger:"P",role:"bass"},{s:2,f:2,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:5,f:0,finger:"A",role:"melody"}],
-  [{s:1,f:0,finger:"P",role:"bass"},{s:2,f:2,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:4,f:2,finger:"A",role:"melody"}],
-  [{s:1,f:0,finger:"P",role:"bass"},{s:2,f:2,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:5,f:0,finger:"A",role:"melody"}],
-  [{s:1,f:0,finger:"P",role:"bass"},{s:2,f:2,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:5,f:4,finger:"A",role:"melody"}],
-
-  // B minor
-  [{s:1,f:2,finger:"P",role:"bass"},{s:2,f:4,finger:"I",role:"harmony"},{s:4,f:3,finger:"M",role:"harmony"},{s:5,f:2,finger:"A",role:"melody"}],
-  [{s:1,f:2,finger:"P",role:"bass"},{s:2,f:4,finger:"I",role:"harmony"},{s:4,f:3,finger:"M",role:"harmony"},{s:5,f:0,finger:"A",role:"melody"}],
-  [{s:1,f:2,finger:"P",role:"bass"},{s:2,f:4,finger:"I",role:"harmony"},{s:4,f:3,finger:"M",role:"harmony"},{s:5,f:2,finger:"A",role:"melody"}],
-  [{s:1,f:2,finger:"P",role:"bass"},{s:2,f:4,finger:"I",role:"harmony"},{s:4,f:3,finger:"M",role:"harmony"},{s:5,f:5,finger:"A",role:"melody"}],
-
-  // F# minor
-  [{s:0,f:2,finger:"P",role:"bass"},{s:1,f:4,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:5,f:2,finger:"A",role:"melody"}],
-  [{s:0,f:2,finger:"P",role:"bass"},{s:1,f:4,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:4,f:2,finger:"A",role:"melody"}],
-  [{s:0,f:2,finger:"P",role:"bass"},{s:1,f:4,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:5,f:2,finger:"A",role:"melody"}],
-  [{s:0,f:2,finger:"P",role:"bass"},{s:1,f:4,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:5,f:5,finger:"A",role:"melody"}]
- ]
+  title:"Canon in D – Practice Arrangement",
+  description:"Latihan fingerstyle original berdasarkan progresi harmoni Canon in D. Bass dan melodi dimainkan bersamaan.",
+  events:[
+    E(N(0,2,"bass","P"),N(3,2,"harmony","M"),N(2,2,"harmony","I"),N(1,3,"melody","A")),
+    E(N(0,2,"bass","P"),N(4,3,"melody","A"),N(3,2,"harmony","M")),
+    E(N(2,0,"bass","P"),N(4,2,"melody","A"),N(3,0,"harmony","M")),
+    E(N(2,0,"bass","P"),N(5,0,"melody","A"),N(4,2,"harmony","M")),
+    E(N(1,0,"bass","P"),N(4,0,"melody","A"),N(3,2,"harmony","M")),
+    E(N(1,0,"bass","P"),N(5,2,"melody","A"),N(4,0,"harmony","M")),
+    E(N(2,2,"bass","P"),N(5,3,"melody","A"),N(4,3,"harmony","M")),
+    E(N(2,2,"bass","P"),N(5,2,"melody","A"),N(3,2,"harmony","M")),
+    E(N(3,0,"bass","P"),N(5,0,"melody","A"),N(4,0,"harmony","M")),
+    E(N(3,0,"bass","P"),N(4,2,"melody","A"),N(3,2,"harmony","M")),
+    E(N(0,2,"bass","P"),N(4,3,"melody","A"),N(3,2,"harmony","M")),
+    E(N(0,2,"bass","P"),N(5,2,"melody","A"),N(4,3,"harmony","M"))
+  ]
 },
-
 romantic:{
- title:"Romantic Fingerstyle",
- level:"Intermediate • Original",
- events:[
-  [{s:0,f:3,finger:"P",role:"bass"},{s:2,f:0,finger:"I",role:"harmony"},{s:4,f:0,finger:"M",role:"harmony"},{s:5,f:0,finger:"A",role:"melody"}],
-  [{s:0,f:3,finger:"P",role:"bass"},{s:2,f:0,finger:"I",role:"harmony"},{s:4,f:0,finger:"M",role:"harmony"},{s:5,f:3,finger:"A",role:"melody"}],
-  [{s:0,f:3,finger:"P",role:"bass"},{s:2,f:0,finger:"I",role:"harmony"},{s:4,f:0,finger:"M",role:"harmony"},{s:5,f:5,finger:"A",role:"melody"}],
-  [{s:0,f:3,finger:"P",role:"bass"},{s:2,f:0,finger:"I",role:"harmony"},{s:4,f:0,finger:"M",role:"harmony"},{s:5,f:3,finger:"A",role:"melody"}],
-
-  [{s:1,f:0,finger:"P",role:"bass"},{s:2,f:2,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:5,f:0,finger:"A",role:"melody"}],
-  [{s:1,f:0,finger:"P",role:"bass"},{s:2,f:2,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:5,f:2,finger:"A",role:"melody"}],
-  [{s:1,f:0,finger:"P",role:"bass"},{s:2,f:2,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:5,f:3,finger:"A",role:"melody"}],
-  [{s:1,f:0,finger:"P",role:"bass"},{s:2,f:2,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:5,f:2,finger:"A",role:"melody"}]
- ]
+  title:"Romantic Fingerstyle – Original",
+  description:"Melodi lembut dengan bass bergantian. Cobalah menonjolkan nada melodi menggunakan jari A dan M.",
+  events:[
+    E(N(0,3,"bass","P"),N(5,3,"melody","A"),N(3,0,"harmony","M")),
+    E(N(0,3,"bass","P"),N(4,1,"melody","A"),N(2,0,"harmony","I")),
+    E(N(2,0,"bass","P"),N(5,0,"melody","A"),N(3,2,"harmony","M")),
+    E(N(2,0,"bass","P"),N(4,3,"melody","A"),N(3,0,"harmony","M")),
+    E(N(1,1,"bass","P"),N(5,1,"melody","A"),N(3,2,"harmony","M")),
+    E(N(1,1,"bass","P"),N(4,3,"melody","A"),N(2,1,"harmony","I")),
+    E(N(2,2,"bass","P"),N(5,3,"melody","A"),N(3,2,"harmony","M")),
+    E(N(2,2,"bass","P"),N(4,2,"melody","A"),N(3,0,"harmony","M")),
+    E(N(0,0,"bass","P"),N(5,0,"melody","A"),N(3,2,"harmony","M")),
+    E(N(0,0,"bass","P"),N(4,1,"melody","A"),N(2,2,"harmony","I"))
+  ]
 },
-
 easy:{
- title:"Easy Fingerstyle",
- level:"Beginner • Original",
- events:[
-  [{s:0,f:0,finger:"P",role:"bass"},{s:2,f:0,finger:"I",role:"harmony"},{s:4,f:0,finger:"M",role:"harmony"},{s:5,f:0,finger:"A",role:"melody"}],
-  [{s:0,f:0,finger:"P",role:"bass"},{s:2,f:0,finger:"I",role:"harmony"},{s:4,f:0,finger:"M",role:"harmony"},{s:5,f:2,finger:"A",role:"melody"}],
-  [{s:0,f:0,finger:"P",role:"bass"},{s:2,f:0,finger:"I",role:"harmony"},{s:4,f:0,finger:"M",role:"harmony"},{s:5,f:3,finger:"A",role:"melody"}],
-  [{s:0,f:0,finger:"P",role:"bass"},{s:2,f:0,finger:"I",role:"harmony"},{s:4,f:0,finger:"M",role:"harmony"},{s:5,f:2,finger:"A",role:"melody"}],
-
-  [{s:1,f:0,finger:"P",role:"bass"},{s:2,f:0,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:5,f:0,finger:"A",role:"melody"}],
-  [{s:1,f:0,finger:"P",role:"bass"},{s:2,f:0,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:5,f:2,finger:"A",role:"melody"}],
-  [{s:1,f:0,finger:"P",role:"bass"},{s:2,f:0,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:5,f:3,finger:"A",role:"melody"}],
-  [{s:1,f:0,finger:"P",role:"bass"},{s:2,f:0,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:5,f:2,finger:"A",role:"melody"}]
- ]
+  title:"Easy Fingerstyle – Original",
+  description:"Pola dasar untuk melatih koordinasi ibu jari dan jari melodi.",
+  events:[
+    E(N(0,0,"bass","P"),N(3,0,"harmony","M"),N(2,0,"melody","I")),
+    E(N(0,0,"bass","P"),N(1,0,"melody","A")),
+    E(N(2,0,"bass","P"),N(3,0,"harmony","M"),N(1,1,"melody","A")),
+    E(N(2,0,"bass","P"),N(1,0,"melody","A")),
+    E(N(1,0,"bass","P"),N(3,2,"harmony","M"),N(2,0,"melody","I")),
+    E(N(1,0,"bass","P"),N(1,0,"melody","A")),
+    E(N(0,0,"bass","P"),N(3,0,"harmony","M"),N(2,0,"melody","I")),
+    E(N(0,0,"bass","P"),N(1,0,"melody","A"))
+  ]
 }
 };
 
-// =================================
-// 3. APPLICATION STATE
-// =================================
+let currentSong="canon";
+let events=songs[currentSong].events;
 
-let song=songs.canon;
-let index=0;
-let playing=false;
-let timer=null;
-let audio=null;
-let total=0;
+// ============================================
+// 3. FRETBOARD
+// ============================================
 
-function initAudio(){
- const AC=window.AudioContext||window.webkitAudioContext;
- if(!AC)return false;
- if(!audio)audio=new AC();
- if(audio.state==="suspended")audio.resume();
- return true;
-}
+const fretboard=document.getElementById("fretboard");
 
-// =================================
-// 4. SIMULTANEOUS GUITAR SOUND
-// =================================
+function buildFretboard(){
+  fretboard.innerHTML="";
 
-// Semua nada dalam satu event mulai pada waktu yang sama.
-
-function playChord(event){
-
- if(!initAudio())return;
-
- const now=audio.currentTime;
-
- event.forEach(note=>{
-
-  const midi=strings[note.s].midi+note.f;
-  const freq=440*Math.pow(2,(midi-69)/12);
-
-  const osc=audio.createOscillator();
-  const harmonic=audio.createOscillator();
-  const gain=audio.createGain();
-  const harmonicGain=audio.createGain();
-
-  osc.type="triangle";
-  osc.frequency.value=freq;
-
-  harmonic.type="sine";
-  harmonic.frequency.value=freq*2;
-
-  // Bass sedikit lebih kuat.
-  const volume=note.role==="bass"?0.19:
-               note.role==="melody"?0.14:0.085;
-
-  gain.gain.setValueAtTime(0.0001,now);
-  gain.gain.exponentialRampToValueAtTime(volume,now+0.018);
-  gain.gain.exponentialRampToValueAtTime(0.0001,now+1.0);
-
-  harmonicGain.gain.setValueAtTime(0.0001,now);
-  harmonicGain.gain.exponentialRampToValueAtTime(volume*0.16,now+0.018);
-  harmonicGain.gain.exponentialRampToValueAtTime(0.0001,now+0.4);
-
-  osc.connect(gain);
-  gain.connect(audio.destination);
-  harmonic.connect(harmonicGain);
-  harmonicGain.connect(audio.destination);
-
-  osc.start(now);
-  harmonic.start(now);
-  osc.stop(now+1.05);
-  harmonic.stop(now+0.45);
- });
-}
-
-// =================================
-// 5. FRETBOARD
-// =================================
-
-const board=document.getElementById("frets");
-
-function createFretboard(){
-
- board.innerHTML="";
-
- strings.forEach((string,s)=>{
-
-  const row=document.createElement("div");
-  row.className="string-row";
-
-  const label=document.createElement("div");
-  label.className="string-name";
-  label.textContent=string.name;
-  row.appendChild(label);
-
+  const numbers=document.createElement("div");
+  numbers.className="fret-numbers";
+  numbers.innerHTML="<span></span>";
   for(let f=0;f<=12;f++){
-
-   const btn=document.createElement("button");
-   btn.className="fret";
-   btn.textContent=f;
-
-   btn.dataset.string=s;
-   btn.dataset.fret=f;
-
-   btn.onclick=()=>{
-
-    pause();
-    clearHighlights();
-
-    btn.classList.add("selected");
-
-    playChord([{s:s,f:f,role:"melody"}]);
-
-    const midi=string.midi+f;
-
-    document.getElementById("fretInfo").textContent=
-     string.name+" string • Fret "+f+" • "+getNote(midi);
-   };
-
-   row.appendChild(btn);
+    const cell=document.createElement("span");
+    cell.textContent=f;
+    numbers.appendChild(cell);
   }
+  fretboard.appendChild(numbers);
 
-  board.appendChild(row);
- });
-}
+  for(let s=5;s>=0;s--){
+    const row=document.createElement("div");
+    row.className="string-row";
+    const name=document.createElement("div");
+    name.className="string-name";
+    name.textContent=tuning[s].name;
+    row.appendChild(name);
 
-function clearHighlights(){
- document.querySelectorAll(".fret").forEach(btn=>{
-  btn.classList.remove("selected","bass-selected");
- });
-}
-
-function highlightEvent(event){
-
- clearHighlights();
-
- event.forEach(note=>{
-
-  const btn=document.querySelector(
-   '.fret[data-string="'+note.s+'"][data-fret="'+note.f+'"]'
-  );
-
-  if(btn){
-   btn.classList.add(
-    note.role==="bass"?"bass-selected":"selected"
-   );
+    for(let f=0;f<=12;f++){
+      const cell=document.createElement("div");
+      cell.className="fret-cell";
+      const button=document.createElement("button");
+      button.id=`fret-${s}-${f}`;
+      button.textContent="";
+      button.title=`Senar ${tuning[s].name}, fret ${f}`;
+      button.addEventListener("click",()=>{
+        if(!initAudio())return;
+        playString({s,f,role:"melody"},audioContext.currentTime+.02);
+      });
+      cell.appendChild(button);
+      row.appendChild(cell);
+    }
+    fretboard.appendChild(row);
   }
- });
 }
 
-// =================================
-// 6. GENERATE TAB
-// =================================
+function clearFretboard(){
+  document.querySelectorAll(".fret-cell button").forEach(button=>{
+    button.className="";
+    button.textContent="";
+  });
+}
 
-function renderTab(current=-1){
+function highlightEvent(index){
+  clearFretboard();
+  const event=events[index];
+  if(!event)return;
 
- const order=[
-  {name:"e",s:5},
-  {name:"B",s:4},
-  {name:"G",s:3},
-  {name:"D",s:2},
-  {name:"A",s:1},
-  {name:"E",s:0}
- ];
+  event.notes.forEach(note=>{
+    const button=document.getElementById(`fret-${note.s}-${note.f}`);
+    if(!button)return;
+    button.className=note.role==="bass"?"bass":"active";
+    button.textContent=note.role==="bass"?"P":note.finger;
+  });
+}
 
- let output="";
+// ============================================
+// 4. TAB RENDERING
+// ============================================
 
- // Beat numbers
- let header="   |";
- song.events.forEach((event,i)=>{
-  header+=String(i+1).padStart(4," ")+" ";
- });
- output+=header+"\n";
+function renderTab(){
+  const container=document.getElementById("tabContent");
+  container.innerHTML="";
 
- order.forEach(row=>{
+  const chunkSize=8;
+  const chunks=Math.ceil(events.length/chunkSize);
 
-  let line=row.name+" |";
+  for(let chunk=0;chunk<chunks;chunk++){
+    const start=chunk*chunkSize;
+    const end=Math.min(start+chunkSize,events.length);
 
-  song.events.forEach((event,i)=>{
+    const grid=document.createElement("div");
+    grid.className="tab-grid";
+    grid.style.marginTop="12px";
 
-   const note=event.find(n=>n.s===row.s);
-   const cell=note?String(note.f):"";
+    for(let s=5;s>=0;s--){
+      const label=document.createElement("div");
+      label.className="tab-string";
+      label.textContent=tuning[s].name+"|";
+      grid.appendChild(label);
 
-   const formatted=cell.padStart(2,"-").padEnd(4," ");
+      for(let i=start;i<end;i++){
+        const cell=document.createElement("div");
+        cell.className="tab-cell";
+        cell.id=`tab-${i}-${s}`;
+        const note=events[i].notes.find(n=>n.s===s);
+        cell.textContent=note?note.f:"—";
+        grid.appendChild(cell);
+      }
+    }
+    container.appendChild(grid);
+  }
+}
 
-   line+=i===current?
-    "<span class='tab-current'>"+formatted+"</span>":
-    formatted;
+function updateTab(index){
+  document.querySelectorAll(".tab-cell").forEach(cell=>{
+    cell.classList.remove("current");
+  });
+  events[index]?.notes.forEach(note=>{
+    const cell=document.getElementById(`tab-${index}-${note.s}`);
+    if(cell)cell.classList.add("current");
   });
 
-  output+=line+"|\n";
- });
+  document.getElementById("fingerInfo").innerHTML="";
+  const event=events[index];
+  if(!event)return;
 
- document.getElementById("tab").innerHTML=output;
+  event.notes.forEach(note=>{
+    const item=document.createElement("div");
+    item.className="finger";
+    const role=note.role==="bass"?"Bass":
+      note.role==="melody"?"Melody":"Harmony";
+    item.innerHTML=`<strong>${note.finger}</strong> · ${role} · Senar ${tuning[note.s].name} fret ${note.f}`;
+    document.getElementById("fingerInfo").appendChild(item);
+  });
 }
 
-// =================================
-// 7. DISPLAY
-// =================================
+// ============================================
+// 5. PLAYBACK CONTROL
+// ============================================
 
-function render(){
-
- document.getElementById("songTitle").textContent=song.title;
- document.getElementById("level").textContent=song.level;
- document.getElementById("noteInfo").textContent="Ready";
- document.getElementById("fretInfo").textContent="Select a fret";
- document.getElementById("bar").style.width="0%";
- document.getElementById("progressText").textContent="Start practicing!";
-
- renderTab();
- clearHighlights();
+function stepDuration(){
+  const bpm=Number(document.getElementById("tempo").value);
+  const multiplier=slowMode?.5:1;
+  return (60/bpm)*multiplier;
 }
 
-// =================================
-// 8. PLAYBACK
-// =================================
+function stopTimer(){
+  if(timer!==null){
+    clearTimeout(timer);
+    timer=null;
+  }
+}
+
+function scheduleNext(token){
+  if(!isPlaying||token!==generation)return;
+
+  if(currentIndex>=events.length){
+    if(repeat){
+      currentIndex=0;
+    }else{
+      isPlaying=false;
+      stopTimer();
+      document.getElementById("status").textContent="Selesai! 🎉";
+      document.getElementById("playBtn").disabled=false;
+      document.getElementById("progressBar").style.width="100%";
+      return;
+    }
+  }
+
+  const index=currentIndex;
+  playEvent(events[index]);
+  highlightEvent(index);
+  updateTab(index);
+
+  document.getElementById("status").textContent=
+    `Memainkan ${index+1} dari ${events.length} · ${songs[currentSong].title}`;
+
+  document.getElementById("progressBar").style.width=
+    ((index+1)/events.length*100)+"%";
+
+  currentIndex++;
+  timer=setTimeout(()=>scheduleNext(token),stepDuration()*1000);
+}
 
 function play(){
+  if(isPlaying)return;
+  if(!initAudio())return;
 
- if(playing)return;
-
- if(index>=song.events.length)index=0;
- if(!initAudio())return;
-
- playing=true;
-
- function next(){
-
-  if(!playing)return;
-
-  if(index>=song.events.length){
-
-   pause();
-
-   document.getElementById("progressText").textContent=
-    "Lesson completed! Great job! 🎉";
-
-   document.getElementById("bar").style.width="100%";
-   renderTab(-1);
-   return;
-  }
-
-  const current=index;
-  const event=song.events[current];
-
-  // Bass + harmony + melody together
-  playChord(event);
-
-  highlightEvent(event);
-  renderTab(current);
-
-  const noteList=event.map(n=>{
-   const midi=strings[n.s].midi+n.f;
-   return getNote(midi);
-  });
-
-  const bass=event.find(n=>n.role==="bass");
-  const melody=event.find(n=>n.role==="melody");
-
-  document.getElementById("noteInfo").textContent=
-   "Bass "+getNote(strings[bass.s].midi+bass.f)+
-   " + Melody "+getNote(strings[melody.s].midi+melody.f);
-
-  document.getElementById("fretInfo").textContent=
-   "Simultaneous notes: "+noteList.join(" • ");
-
-  index++;
-  total+=event.length;
-
-  document.getElementById("count").textContent=total;
-
-  document.getElementById("bar").style.width=
-   (index/song.events.length*100)+"%";
-
-  document.getElementById("progressText").textContent=
-   "Chord "+index+" / "+song.events.length+
-   " • "+event.length+" notes together";
-
-  timer=setTimeout(
-   next,
-   60000/Number(document.getElementById("tempo").value)
-  );
- }
-
- next();
+  isPlaying=true;
+  generation++;
+  const token=generation;
+  document.getElementById("playBtn").disabled=true;
+  scheduleNext(token);
 }
 
-// =================================
-// 9. PAUSE / RESET
-// =================================
-
 function pause(){
- playing=false;
- clearTimeout(timer);
+  if(!isPlaying)return;
+  isPlaying=false;
+  generation++;
+  stopTimer();
+  document.getElementById("playBtn").disabled=false;
+  document.getElementById("status").textContent="Dijeda.";
 }
 
 function reset(){
-
- pause();
- index=0;
-
- document.getElementById("noteInfo").textContent="Ready";
- document.getElementById("bar").style.width="0%";
- document.getElementById("progressText").textContent="Start practicing!";
-
- renderTab(-1);
- clearHighlights();
-}
-
-// =================================
-// 10. TEMPO
-// =================================
-
-function changeTempo(){
-
- document.getElementById("bpm").textContent=
-  document.getElementById("tempo").value+" BPM";
-
- if(playing){
   pause();
-  play();
- }
+  currentIndex=0;
+  clearFretboard();
+  document.getElementById("fingerInfo").innerHTML="";
+  document.getElementById("progressBar").style.width="0%";
+  document.getElementById("status").textContent="Kembali ke awal.";
+  renderTab();
 }
 
-function changeBpm(value){
-
- const tempo=document.getElementById("tempo");
-
- tempo.value=Math.max(
-  40,
-  Math.min(160,Number(tempo.value)+value)
- );
-
- changeTempo();
+function loadSong(){
+  pause();
+  currentSong=document.getElementById("songSelect").value;
+  events=songs[currentSong].events;
+  currentIndex=0;
+  document.getElementById("songDescription").textContent=
+    songs[currentSong].description;
+  document.getElementById("status").textContent=
+    "Lagu dimuat: "+songs[currentSong].title;
+  document.getElementById("progressBar").style.width="0%";
+  clearFretboard();
+  renderTab();
+  document.getElementById("fingerInfo").innerHTML="";
 }
 
-// =================================
-// 11. SONG SELECTION
-// =================================
+// ============================================
+// 6. USER INTERFACE
+// ============================================
 
-document.getElementById("song").onchange=function(){
+document.getElementById("playBtn").addEventListener("click",play);
+document.getElementById("pauseBtn").addEventListener("click",pause);
+document.getElementById("resetBtn").addEventListener("click",reset);
 
- pause();
- index=0;
+document.getElementById("songSelect").addEventListener("change",loadSong);
 
- song=songs[this.value];
+document.getElementById("tempo").addEventListener("input",e=>{
+  document.getElementById("tempoValue").textContent=e.target.value;
+});
 
- render();
-};
+document.getElementById("volume").addEventListener("input",e=>{
+  document.getElementById("volumeValue").textContent=e.target.value+"%";
+  if(masterGain){
+    masterGain.gain.setTargetAtTime(
+      Number(e.target.value)/100,audioContext.currentTime,.03
+    );
+  }
+});
 
-// =================================
-// 12. START
-// =================================
+document.getElementById("melodyVolume").addEventListener("input",e=>{
+  document.getElementById("melodyValue").textContent=e.target.value+"%";
+});
 
-createFretboard();
-render();
+document.getElementById("slowBtn").addEventListener("click",()=>{
+  slowMode=!slowMode;
+  document.getElementById("slowBtn").textContent=
+    slowMode?"🐢 SLOW PRACTICE: ON":"🐢 SLOW PRACTICE";
+});
+
+document.getElementById("repeatBtn").addEventListener("click",()=>{
+  repeat=!repeat;
+  document.getElementById("repeatBtn").textContent=
+    repeat?"↻ AUTO REPEAT: ON":"↻ AUTO REPEAT: OFF";
+});
+
+// ============================================
+// 7. INITIALIZE
+// ============================================
+
+buildFretboard();
+loadSong();
 
 </script>
 </body>
