@@ -3,15 +3,14 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#10151e">
-<title>MelodyGuitar 4.0</title>
-
+<title>MelodyGuitar 5.0</title>
 <style>
 *{box-sizing:border-box}
 body{
- margin:0;padding:18px;background:#10151e;
- color:#f4f5f7;font-family:Arial,sans-serif
+ margin:0;padding:16px;background:#10151e;color:#f4f5f7;
+ font-family:Arial,sans-serif
 }
 header{display:flex;justify-content:space-between;align-items:center}
 h1{color:#64e6b4;font-size:25px}
@@ -19,69 +18,36 @@ h2{font-size:20px}
 small{color:#9daaba}
 .card{
  background:#1b2635;border:1px solid #304052;
- padding:18px;border-radius:17px;margin:17px 0
+ padding:17px;border-radius:16px;margin:16px 0
 }
 select,button{
- padding:12px;border:0;border-radius:10px;font-size:14px
+ padding:12px;border:0;border-radius:9px;font-size:14px
 }
-select{
- width:100%;margin:10px 0;
- background:#29384a;color:white
-}
-button{
- background:#64e6b4;color:#102019;
- font-weight:bold;cursor:pointer
-}
+select{width:100%;margin:10px 0;background:#29384a;color:white}
+button{background:#64e6b4;color:#102019;font-weight:bold}
 button.secondary{background:#34465b;color:white}
 .controls{display:flex;gap:8px;flex-wrap:wrap}
 .controls button{flex:1}
 .stat{display:flex;justify-content:space-between;gap:10px}
-.progress{
- height:7px;background:#34465b;border-radius:10px;
- overflow:hidden;margin:12px 0
-}
-#bar{height:100%;width:0%;background:#64e6b4}
-.tab-wrap{
- overflow-x:auto;background:#10151e;
- padding:12px;border-radius:12px
-}
-#tab{
- white-space:pre;font-family:monospace;
- font-size:14px;line-height:1.9;color:#c7d6e5
-}
-.tab-current{
- color:#64e6b4;background:#34465b;
- font-weight:bold;border-radius:3px
-}
+.note-display{color:#64e6b4;font-size:20px;font-weight:bold}
+.progress{height:7px;background:#34465b;border-radius:10px;overflow:hidden;margin:12px 0}
+#bar{height:100%;width:0;background:#64e6b4}
+.tab-wrap{overflow-x:auto;background:#10151e;padding:12px;border-radius:12px}
+#tab{font:13px monospace;white-space:pre;line-height:2;color:#c7d6e5}
+.tab-current{color:#64e6b4;background:#34465b;font-weight:bold}
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0;font-size:12px}
+.legend b{color:#64e6b4}
 .guitar-scroll{overflow-x:auto;padding-bottom:10px}
-#frets{
- min-width:620px;display:flex;
- flex-direction:column;gap:7px
-}
-.string-row{
- display:grid;grid-template-columns:30px repeat(13,42px);
- gap:3px;align-items:center
-}
-.string-name{
- color:#64e6b4;font-weight:bold;text-align:center
-}
-.fret{
- height:38px;padding:2px;background:#34465b;
- color:white;border:1px solid #53667c;
- border-radius:5px;font-size:12px
-}
-.fret.selected{
- background:#64e6b4;color:#102019;
- outline:2px solid white
-}
+#frets{min-width:620px;display:flex;flex-direction:column;gap:7px}
+.string-row{display:grid;grid-template-columns:30px repeat(13,42px);gap:3px;align-items:center}
+.string-name{text-align:center;color:#64e6b4;font-weight:bold}
+.fret{height:38px;padding:2px;background:#34465b;color:white;border:1px solid #53667c;border-radius:5px;font-size:12px}
+.fret.selected{background:#64e6b4;color:#102019;outline:2px solid white}
+.fret.bass-selected{background:#e9ad54;color:#201608;outline:2px solid white}
 input[type=range]{width:100%;accent-color:#64e6b4}
-.note-display{
- color:#64e6b4;font-size:20px;font-weight:bold
-}
-footer{text-align:center;color:#8494a7;padding:25px;font-size:12px}
+footer{text-align:center;color:#8494a7;padding:24px;font-size:12px}
 </style>
 </head>
-
 <body>
 
 <header>
@@ -89,17 +55,14 @@ footer{text-align:center;color:#8494a7;padding:25px;font-size:12px}
   <h1>🎸 MelodyGuitar</h1>
   <small>LEARN • PLAY • MASTER</small>
  </div>
- <b>4.0</b>
+ <b>5.0</b>
 </header>
 
 <div class="card">
  <small>YOUR MUSIC JOURNEY</small>
- <h2>Welcome, Guitarist!</h2>
- <p>Learn beautiful fingerstyle guitar melodies.</p>
- <div class="stat">
-  <span>Total notes played</span>
-  <b id="count">0</b>
- </div>
+ <h2>Fingerstyle Guitar Studio</h2>
+ <p>Bass, harmony and melody played together.</p>
+ <div class="stat"><span>Total notes played</span><b id="count">0</b></div>
 </div>
 
 <div class="card">
@@ -107,29 +70,33 @@ footer{text-align:center;color:#8494a7;padding:25px;font-size:12px}
  <h2>Choose your song</h2>
  <select id="song">
   <option value="canon">Canon in D - Pachelbel</option>
-  <option value="romantic">Romantic Melody - Original</option>
+  <option value="romantic">Romantic Fingerstyle - Original</option>
   <option value="easy">Easy Fingerstyle - Original</option>
  </select>
  <p id="level">Intermediate • Fingerstyle</p>
 </div>
 
 <div class="card">
- <small>INTERACTIVE LESSON</small>
+ <small>FINGERSTYLE LESSON</small>
  <h2 id="songTitle">Canon in D</h2>
 
  <div class="stat">
-  <span>Current note</span>
-  <span class="note-display" id="noteInfo">Ready</span>
+  <span>Current chord / notes</span>
+  <span id="noteInfo" class="note-display">Ready</span>
  </div>
 
- <div class="progress">
-  <div id="bar"></div>
+ <div class="progress"><div id="bar"></div></div>
+
+ <div class="legend">
+  <span><b>P</b> = Thumb / Bass</span>
+  <span><b>I</b> = Index</span>
+  <span><b>M</b> = Middle</span>
+  <span><b>A</b> = Ring</span>
  </div>
 
- <h3>Six-string Guitar TAB</h3>
- <div class="tab-wrap">
-  <div id="tab"></div>
- </div>
+ <h3>Fingerstyle TAB</h3>
+ <small>Setiap kolom adalah satu ketukan. Angka yang sama pada satu kolom dimainkan bersamaan.</small>
+ <div class="tab-wrap"><div id="tab"></div></div>
 
  <div class="controls" style="margin-top:15px">
   <button onclick="play()">▶ PLAY</button>
@@ -140,34 +107,18 @@ footer{text-align:center;color:#8494a7;padding:25px;font-size:12px}
 
 <div class="card">
  <small>VIRTUAL GUITAR</small>
- <h2>Play the Guitar</h2>
- <p>Sentuh angka fret untuk memainkan nada.</p>
-
- <div class="guitar-scroll">
-  <div id="frets"></div>
- </div>
-
- <p id="fretInfo" class="note-display">
-  Select a string and fret
- </p>
-
- <small>
- Standard tuning: E A D G B E
- (senar 6 sampai senar 1)
- </small>
+ <h2>Six String Fretboard</h2>
+ <p>Posisi fret aktif akan disorot bersamaan.</p>
+ <div class="guitar-scroll"><div id="frets"></div></div>
+ <p id="fretInfo" class="note-display">Select a fret</p>
+ <small>Standard tuning: E A D G B E (senar 6 ke senar 1)</small>
 </div>
 
 <div class="card">
  <small>PRACTICE SETTINGS</small>
  <h2>Tempo Control</h2>
- <div class="stat">
-  <span>Practice speed</span>
-  <b id="bpm">80 BPM</b>
- </div>
-
- <input type="range" min="40" max="160"
- value="80" id="tempo" oninput="changeTempo()">
-
+ <div class="stat"><span>Practice speed</span><b id="bpm">80 BPM</b></div>
+ <input type="range" min="40" max="160" value="80" id="tempo" oninput="changeTempo()">
  <div class="controls">
   <button class="secondary" onclick="changeBpm(-5)">− 5 BPM</button>
   <button class="secondary" onclick="changeBpm(5)">+ 5 BPM</button>
@@ -175,14 +126,12 @@ footer{text-align:center;color:#8494a7;padding:25px;font-size:12px}
 </div>
 
 <div class="card">
- <small>YOUR PROGRESS</small>
- <h2>Practice Tracker</h2>
+ <small>PRACTICE TRACKER</small>
+ <h2>Your Progress</h2>
  <p id="progressText">Start your first lesson!</p>
 </div>
 
-<footer>
- MelodyGuitar 4.0 · Made for Guitar Lovers ❤️
-</footer>
+<footer>MelodyGuitar 5.0 · Fingerstyle Studio ❤️</footer>
 
 <script>
 
@@ -190,9 +139,7 @@ footer{text-align:center;color:#8494a7;padding:25px;font-size:12px}
 // 1. GUITAR TUNING
 // =================================
 
-// Urutan senar 6 ke senar 1
-
-const strings = [
+const strings=[
  {name:"E",midi:40},
  {name:"A",midi:45},
  {name:"D",midi:50},
@@ -201,66 +148,83 @@ const strings = [
  {name:"e",midi:64}
 ];
 
-const noteNames=[
- "C","C#","D","D#","E","F",
- "F#","G","G#","A","A#","B"
-];
+const names=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
 
-function getNote(midi){
- return noteNames[midi%12]+
- (Math.floor(midi/12)-1);
+function getNote(m){
+ return names[m%12]+(Math.floor(m/12)-1);
 }
 
 // =================================
-// 2. SONG DATA
+// 2. SONG ARRANGEMENTS
 // =================================
 
-// s = nomor senar (0 = senar 6)
-// f = nomor fret
+// Format:
+// {s: string, f: fret, finger: P/I/M/A, role: bass/melody/harmony}
+// Semua notes dalam satu event dimainkan BERSAMA.
 
 const songs={
 
- canon:{
-  title:"Canon in D - Pachelbel",
-  level:"Intermediate • Canon Melody",
+canon:{
+ title:"Canon in D - Pachelbel",
+ level:"Intermediate • Fingerstyle",
+ events:[
+  // D major
+  [{s:2,f:0,finger:"P",role:"bass"},{s:3,f:2,finger:"I",role:"harmony"},{s:4,f:3,finger:"M",role:"harmony"},{s:5,f:2,finger:"A",role:"melody"}],
+  [{s:2,f:0,finger:"P",role:"bass"},{s:3,f:2,finger:"I",role:"harmony"},{s:4,f:3,finger:"M",role:"harmony"},{s:5,f:0,finger:"A",role:"melody"}],
+  [{s:2,f:0,finger:"P",role:"bass"},{s:3,f:2,finger:"I",role:"harmony"},{s:4,f:3,finger:"M",role:"harmony"},{s:5,f:2,finger:"A",role:"melody"}],
+  [{s:2,f:0,finger:"P",role:"bass"},{s:3,f:2,finger:"I",role:"harmony"},{s:4,f:3,finger:"M",role:"harmony"},{s:5,f:5,finger:"A",role:"melody"}],
 
-  events:[
-   {s:5,f:2},{s:5,f:0},{s:4,f:3},{s:4,f:2},
-   {s:4,f:0},{s:3,f:2},{s:4,f:0},{s:4,f:2},
-   {s:4,f:3},{s:5,f:0},{s:4,f:3},{s:4,f:2},
-   {s:4,f:0},{s:3,f:2},{s:4,f:0},{s:4,f:2},
-   {s:5,f:2},{s:5,f:0},{s:4,f:3},{s:4,f:2},
-   {s:4,f:0},{s:3,f:2},{s:4,f:0},{s:4,f:2}
-  ]
- },
+  // A major
+  [{s:1,f:0,finger:"P",role:"bass"},{s:2,f:2,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:5,f:0,finger:"A",role:"melody"}],
+  [{s:1,f:0,finger:"P",role:"bass"},{s:2,f:2,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:4,f:2,finger:"A",role:"melody"}],
+  [{s:1,f:0,finger:"P",role:"bass"},{s:2,f:2,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:5,f:0,finger:"A",role:"melody"}],
+  [{s:1,f:0,finger:"P",role:"bass"},{s:2,f:2,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:5,f:4,finger:"A",role:"melody"}],
 
- romantic:{
-  title:"Romantic Melody",
-  level:"Intermediate • Original",
+  // B minor
+  [{s:1,f:2,finger:"P",role:"bass"},{s:2,f:4,finger:"I",role:"harmony"},{s:4,f:3,finger:"M",role:"harmony"},{s:5,f:2,finger:"A",role:"melody"}],
+  [{s:1,f:2,finger:"P",role:"bass"},{s:2,f:4,finger:"I",role:"harmony"},{s:4,f:3,finger:"M",role:"harmony"},{s:5,f:0,finger:"A",role:"melody"}],
+  [{s:1,f:2,finger:"P",role:"bass"},{s:2,f:4,finger:"I",role:"harmony"},{s:4,f:3,finger:"M",role:"harmony"},{s:5,f:2,finger:"A",role:"melody"}],
+  [{s:1,f:2,finger:"P",role:"bass"},{s:2,f:4,finger:"I",role:"harmony"},{s:4,f:3,finger:"M",role:"harmony"},{s:5,f:5,finger:"A",role:"melody"}],
 
-  events:[
-   {s:5,f:0},{s:5,f:2},{s:5,f:3},{s:5,f:5},
-   {s:4,f:3},{s:4,f:2},{s:5,f:3},{s:5,f:2},
-   {s:5,f:0},{s:4,f:3},{s:4,f:2},{s:4,f:0},
-   {s:5,f:2},{s:5,f:3},{s:5,f:5},{s:5,f:3},
-   {s:5,f:7},{s:5,f:5},{s:5,f:3},{s:5,f:2},
-   {s:4,f:3},{s:4,f:2},{s:5,f:0},{s:5,f:2}
-  ]
- },
+  // F# minor
+  [{s:0,f:2,finger:"P",role:"bass"},{s:1,f:4,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:5,f:2,finger:"A",role:"melody"}],
+  [{s:0,f:2,finger:"P",role:"bass"},{s:1,f:4,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:4,f:2,finger:"A",role:"melody"}],
+  [{s:0,f:2,finger:"P",role:"bass"},{s:1,f:4,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:5,f:2,finger:"A",role:"melody"}],
+  [{s:0,f:2,finger:"P",role:"bass"},{s:1,f:4,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:5,f:5,finger:"A",role:"melody"}]
+ ]
+},
 
- easy:{
-  title:"Easy Fingerstyle",
-  level:"Beginner • Original",
+romantic:{
+ title:"Romantic Fingerstyle",
+ level:"Intermediate • Original",
+ events:[
+  [{s:0,f:3,finger:"P",role:"bass"},{s:2,f:0,finger:"I",role:"harmony"},{s:4,f:0,finger:"M",role:"harmony"},{s:5,f:0,finger:"A",role:"melody"}],
+  [{s:0,f:3,finger:"P",role:"bass"},{s:2,f:0,finger:"I",role:"harmony"},{s:4,f:0,finger:"M",role:"harmony"},{s:5,f:3,finger:"A",role:"melody"}],
+  [{s:0,f:3,finger:"P",role:"bass"},{s:2,f:0,finger:"I",role:"harmony"},{s:4,f:0,finger:"M",role:"harmony"},{s:5,f:5,finger:"A",role:"melody"}],
+  [{s:0,f:3,finger:"P",role:"bass"},{s:2,f:0,finger:"I",role:"harmony"},{s:4,f:0,finger:"M",role:"harmony"},{s:5,f:3,finger:"A",role:"melody"}],
 
-  events:[
-   {s:5,f:0},{s:5,f:2},{s:5,f:3},{s:5,f:2},
-   {s:4,f:0},{s:4,f:2},{s:4,f:3},{s:4,f:2},
-   {s:5,f:0},{s:5,f:3},{s:5,f:5},{s:5,f:3},
-   {s:4,f:2},{s:4,f:0},{s:5,f:2},{s:5,f:0},
-   {s:5,f:3},{s:5,f:5},{s:5,f:3},{s:5,f:2}
-  ]
- }
+  [{s:1,f:0,finger:"P",role:"bass"},{s:2,f:2,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:5,f:0,finger:"A",role:"melody"}],
+  [{s:1,f:0,finger:"P",role:"bass"},{s:2,f:2,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:5,f:2,finger:"A",role:"melody"}],
+  [{s:1,f:0,finger:"P",role:"bass"},{s:2,f:2,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:5,f:3,finger:"A",role:"melody"}],
+  [{s:1,f:0,finger:"P",role:"bass"},{s:2,f:2,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:5,f:2,finger:"A",role:"melody"}]
+ ]
+},
 
+easy:{
+ title:"Easy Fingerstyle",
+ level:"Beginner • Original",
+ events:[
+  [{s:0,f:0,finger:"P",role:"bass"},{s:2,f:0,finger:"I",role:"harmony"},{s:4,f:0,finger:"M",role:"harmony"},{s:5,f:0,finger:"A",role:"melody"}],
+  [{s:0,f:0,finger:"P",role:"bass"},{s:2,f:0,finger:"I",role:"harmony"},{s:4,f:0,finger:"M",role:"harmony"},{s:5,f:2,finger:"A",role:"melody"}],
+  [{s:0,f:0,finger:"P",role:"bass"},{s:2,f:0,finger:"I",role:"harmony"},{s:4,f:0,finger:"M",role:"harmony"},{s:5,f:3,finger:"A",role:"melody"}],
+  [{s:0,f:0,finger:"P",role:"bass"},{s:2,f:0,finger:"I",role:"harmony"},{s:4,f:0,finger:"M",role:"harmony"},{s:5,f:2,finger:"A",role:"melody"}],
+
+  [{s:1,f:0,finger:"P",role:"bass"},{s:2,f:0,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:5,f:0,finger:"A",role:"melody"}],
+  [{s:1,f:0,finger:"P",role:"bass"},{s:2,f:0,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:5,f:2,finger:"A",role:"melody"}],
+  [{s:1,f:0,finger:"P",role:"bass"},{s:2,f:0,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:5,f:3,finger:"A",role:"melody"}],
+  [{s:1,f:0,finger:"P",role:"bass"},{s:2,f:0,finger:"I",role:"harmony"},{s:3,f:2,finger:"M",role:"harmony"},{s:5,f:2,finger:"A",role:"melody"}]
+ ]
+}
 };
 
 // =================================
@@ -269,73 +233,73 @@ const songs={
 
 let song=songs.canon;
 let index=0;
-let timer=null;
 let playing=false;
-let total=0;
+let timer=null;
 let audio=null;
+let total=0;
 
 function initAudio(){
-
- const AudioContextClass=
- window.AudioContext||window.webkitAudioContext;
-
- if(!AudioContextClass)return false;
-
- if(!audio)audio=new AudioContextClass();
-
- if(audio.state==="suspended"){
-  audio.resume();
- }
-
+ const AC=window.AudioContext||window.webkitAudioContext;
+ if(!AC)return false;
+ if(!audio)audio=new AC();
+ if(audio.state==="suspended")audio.resume();
  return true;
 }
 
 // =================================
-// 4. GUITAR SOUND
+// 4. SIMULTANEOUS GUITAR SOUND
 // =================================
 
-function sound(midi){
+// Semua nada dalam satu event mulai pada waktu yang sama.
+
+function playChord(event){
 
  if(!initAudio())return;
 
  const now=audio.currentTime;
- const frequency=440*Math.pow(2,(midi-69)/12);
 
- const osc=audio.createOscillator();
- const harmonic=audio.createOscillator();
+ event.forEach(note=>{
 
- const gain=audio.createGain();
- const harmonicGain=audio.createGain();
+  const midi=strings[note.s].midi+note.f;
+  const freq=440*Math.pow(2,(midi-69)/12);
 
- osc.type="triangle";
- osc.frequency.value=frequency;
+  const osc=audio.createOscillator();
+  const harmonic=audio.createOscillator();
+  const gain=audio.createGain();
+  const harmonicGain=audio.createGain();
 
- harmonic.type="sine";
- harmonic.frequency.value=frequency*2;
+  osc.type="triangle";
+  osc.frequency.value=freq;
 
- gain.gain.setValueAtTime(0.0001,now);
- gain.gain.exponentialRampToValueAtTime(0.17,now+0.015);
- gain.gain.exponentialRampToValueAtTime(0.0001,now+0.75);
+  harmonic.type="sine";
+  harmonic.frequency.value=freq*2;
 
- harmonicGain.gain.setValueAtTime(0.0001,now);
- harmonicGain.gain.exponentialRampToValueAtTime(0.025,now+0.015);
- harmonicGain.gain.exponentialRampToValueAtTime(0.0001,now+0.3);
+  // Bass sedikit lebih kuat.
+  const volume=note.role==="bass"?0.19:
+               note.role==="melody"?0.14:0.085;
 
- osc.connect(gain);
- gain.connect(audio.destination);
+  gain.gain.setValueAtTime(0.0001,now);
+  gain.gain.exponentialRampToValueAtTime(volume,now+0.018);
+  gain.gain.exponentialRampToValueAtTime(0.0001,now+1.0);
 
- harmonic.connect(harmonicGain);
- harmonicGain.connect(audio.destination);
+  harmonicGain.gain.setValueAtTime(0.0001,now);
+  harmonicGain.gain.exponentialRampToValueAtTime(volume*0.16,now+0.018);
+  harmonicGain.gain.exponentialRampToValueAtTime(0.0001,now+0.4);
 
- osc.start(now);
- harmonic.start(now);
+  osc.connect(gain);
+  gain.connect(audio.destination);
+  harmonic.connect(harmonicGain);
+  harmonicGain.connect(audio.destination);
 
- osc.stop(now+0.8);
- harmonic.stop(now+0.35);
+  osc.start(now);
+  harmonic.start(now);
+  osc.stop(now+1.05);
+  harmonic.stop(now+0.45);
+ });
 }
 
 // =================================
-// 5. SIX STRING FRETBOARD
+// 5. FRETBOARD
 // =================================
 
 const board=document.getElementById("frets");
@@ -352,32 +316,30 @@ function createFretboard(){
   const label=document.createElement("div");
   label.className="string-name";
   label.textContent=string.name;
-
   row.appendChild(label);
 
-  for(let fret=0;fret<=12;fret++){
+  for(let f=0;f<=12;f++){
 
    const btn=document.createElement("button");
    btn.className="fret";
-   btn.textContent=fret;
+   btn.textContent=f;
 
    btn.dataset.string=s;
-   btn.dataset.fret=fret;
+   btn.dataset.fret=f;
 
    btn.onclick=()=>{
 
     pause();
+    clearHighlights();
 
-    highlightFret(s,fret);
+    btn.classList.add("selected");
 
-    const midi=string.midi+fret;
+    playChord([{s:s,f:f,role:"melody"}]);
 
-    sound(midi);
+    const midi=string.midi+f;
 
     document.getElementById("fretInfo").textContent=
-     "String "+string.name+
-     " • Fret "+fret+
-     " • "+getNote(midi);
+     string.name+" string • Fret "+f+" • "+getNote(midi);
    };
 
    row.appendChild(btn);
@@ -387,30 +349,37 @@ function createFretboard(){
  });
 }
 
-// =================================
-// 6. HIGHLIGHT FRET
-// =================================
-
-function highlightFret(s,f){
-
+function clearHighlights(){
  document.querySelectorAll(".fret").forEach(btn=>{
-  btn.classList.remove("selected");
+  btn.classList.remove("selected","bass-selected");
  });
+}
 
- const selected=document.querySelector(
-  '.fret[data-string="'+s+'"][data-fret="'+f+'"]'
- );
+function highlightEvent(event){
 
- if(selected)selected.classList.add("selected");
+ clearHighlights();
+
+ event.forEach(note=>{
+
+  const btn=document.querySelector(
+   '.fret[data-string="'+note.s+'"][data-fret="'+note.f+'"]'
+  );
+
+  if(btn){
+   btn.classList.add(
+    note.role==="bass"?"bass-selected":"selected"
+   );
+  }
+ });
 }
 
 // =================================
-// 7. GENERATE TAB FROM SONG DATA
+// 6. GENERATE TAB
 // =================================
 
 function renderTab(current=-1){
 
- const displayStrings=[
+ const order=[
   {name:"e",s:5},
   {name:"B",s:4},
   {name:"G",s:3},
@@ -421,21 +390,27 @@ function renderTab(current=-1){
 
  let output="";
 
- displayStrings.forEach(row=>{
+ // Beat numbers
+ let header="   |";
+ song.events.forEach((event,i)=>{
+  header+=String(i+1).padStart(4," ")+" ";
+ });
+ output+=header+"\n";
 
-  let line=row.name+"|";
+ order.forEach(row=>{
+
+  let line=row.name+" |";
 
   song.events.forEach((event,i)=>{
 
-   let cell=event.s===row.s?
-    String(event.f).padEnd(4," "):
-    "----";
+   const note=event.find(n=>n.s===row.s);
+   const cell=note?String(note.f):"";
 
-   if(i===current){
-    line+='<span class="tab-current">'+cell+'</span>';
-   }else{
-    line+=cell;
-   }
+   const formatted=cell.padStart(2,"-").padEnd(4," ");
+
+   line+=i===current?
+    "<span class='tab-current'>"+formatted+"</span>":
+    formatted;
   });
 
   output+=line+"|\n";
@@ -445,29 +420,24 @@ function renderTab(current=-1){
 }
 
 // =================================
-// 8. DISPLAY SONG
+// 7. DISPLAY
 // =================================
 
 function render(){
 
  document.getElementById("songTitle").textContent=song.title;
  document.getElementById("level").textContent=song.level;
-
  document.getElementById("noteInfo").textContent="Ready";
- document.getElementById("fretInfo").textContent="Select a string and fret";
-
+ document.getElementById("fretInfo").textContent="Select a fret";
  document.getElementById("bar").style.width="0%";
  document.getElementById("progressText").textContent="Start practicing!";
 
  renderTab();
-
- document.querySelectorAll(".fret").forEach(btn=>{
-  btn.classList.remove("selected");
- });
+ clearHighlights();
 }
 
 // =================================
-// 9. PLAYBACK
+// 8. PLAYBACK
 // =================================
 
 function play(){
@@ -475,7 +445,6 @@ function play(){
  if(playing)return;
 
  if(index>=song.events.length)index=0;
-
  if(!initAudio())return;
 
  playing=true;
@@ -492,7 +461,6 @@ function play(){
     "Lesson completed! Great job! 🎉";
 
    document.getElementById("bar").style.width="100%";
-
    renderTab(-1);
    return;
   }
@@ -500,23 +468,29 @@ function play(){
   const current=index;
   const event=song.events[current];
 
-  const string=strings[event.s];
-  const midi=string.midi+event.f;
+  // Bass + harmony + melody together
+  playChord(event);
 
-  sound(midi);
-
-  highlightFret(event.s,event.f);
+  highlightEvent(event);
   renderTab(current);
 
-  document.getElementById("noteInfo").textContent=getNote(midi);
+  const noteList=event.map(n=>{
+   const midi=strings[n.s].midi+n.f;
+   return getNote(midi);
+  });
+
+  const bass=event.find(n=>n.role==="bass");
+  const melody=event.find(n=>n.role==="melody");
+
+  document.getElementById("noteInfo").textContent=
+   "Bass "+getNote(strings[bass.s].midi+bass.f)+
+   " + Melody "+getNote(strings[melody.s].midi+melody.f);
 
   document.getElementById("fretInfo").textContent=
-   "String "+string.name+
-   " • Fret "+event.f+
-   " • "+getNote(midi);
+   "Simultaneous notes: "+noteList.join(" • ");
 
   index++;
-  total++;
+  total+=event.length;
 
   document.getElementById("count").textContent=total;
 
@@ -524,7 +498,8 @@ function play(){
    (index/song.events.length*100)+"%";
 
   document.getElementById("progressText").textContent=
-   "Completed "+index+" / "+song.events.length+" notes";
+   "Chord "+index+" / "+song.events.length+
+   " • "+event.length+" notes together";
 
   timer=setTimeout(
    next,
@@ -536,11 +511,10 @@ function play(){
 }
 
 // =================================
-// 10. PAUSE AND RESET
+// 9. PAUSE / RESET
 // =================================
 
 function pause(){
-
  playing=false;
  clearTimeout(timer);
 }
@@ -548,7 +522,6 @@ function pause(){
 function reset(){
 
  pause();
-
  index=0;
 
  document.getElementById("noteInfo").textContent="Ready";
@@ -556,14 +529,11 @@ function reset(){
  document.getElementById("progressText").textContent="Start practicing!";
 
  renderTab(-1);
-
- document.querySelectorAll(".fret").forEach(btn=>{
-  btn.classList.remove("selected");
- });
+ clearHighlights();
 }
 
 // =================================
-// 11. TEMPO
+// 10. TEMPO
 // =================================
 
 function changeTempo(){
@@ -590,13 +560,12 @@ function changeBpm(value){
 }
 
 // =================================
-// 12. CHANGE SONG
+// 11. SONG SELECTION
 // =================================
 
 document.getElementById("song").onchange=function(){
 
  pause();
-
  index=0;
 
  song=songs[this.value];
@@ -605,7 +574,7 @@ document.getElementById("song").onchange=function(){
 };
 
 // =================================
-// 13. START
+// 12. START
 // =================================
 
 createFretboard();
