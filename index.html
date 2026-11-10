@@ -133,115 +133,216 @@ E|----------------|</div>
 <footer>MelodyGuitar 2.0 · Made for guitar lovers ❤️</footer>
 
 <script>
-const songs={
- canon:{
-  title:"Canon in D",
-  level:"Intermediate • Fingerstyle",
-  notes:[64,67,69,71,69,67,64,62,64,67,69,67,64,62,60,62],
-  tab:"e| 0---2---3---2---| 0---2---3---2---|\nB| 1---1---1---1---| 0---0---0---0---|\nG| 0---0---0---0---| 0---0---0---0---|\nD| 2---2---0---0---| 2---2---0---0---|\nA| 0---0---2---2---| 0---0---2---2---|\nE|----------------|----------------|"
- },
- romantic:{
-  title:"Romantic Melody",
-  level:"Intermediate • Original",
-  notes:[64,67,71,76,74,71,69,67,64,67,69,72,76,74,72,69],
-  tab:"e| 0---3---7---7---| 5---3---2---0---|\nB| 1---0---0---0---| 3---0---1---1---|\nG| 0---0---0---0---| 2---0---0---0---|\nD| 2---0---0---0---| 0---0---2---2---|\nA| 0---2---2---2---|----------------|\nE|----------------|----------------|"
- },
- easy:{
-  title:"Easy Fingerstyle",
-  level:"Beginner • Original",
-  notes:[60,64,67,64,60,64,69,64,62,65,69,65,62,65,71,65],
-  tab:"e| 0---0---0---0---|\nB| 1---1---1---1---|\nG| 0---0---0---0---|\nD| 2---2---2---2---|\nA| 3---3---3---3---|\nE|----------------|"
- }
+
+const songs = {
+  canon: {
+    title: "Canon in D",
+    level: "Intermediate • Fingerstyle",
+    notes: [64,67,69,71,69,67,64,62,64,67,69,67,64,62,60,62]
+  },
+  romantic: {
+    title: "Romantic Melody",
+    level: "Intermediate • Original",
+    notes: [64,67,71,76,74,71,69,67,64,67,69,72,76,74,72,69]
+  },
+  easy: {
+    title: "Easy Fingerstyle",
+    level: "Beginner • Original",
+    notes: [60,64,67,64,60,64,69,64,62,65,69,65,62,65,71,65]
+  }
 };
 
-let song=songs.canon;
-let index=0,timer=null,playing=false,total=0;
-let audio=null;
+let song = songs.canon;
+let index = 0;
+let timer = null;
+let playing = false;
+let total = 0;
+let audio = null;
 
-function sound(midi){
- const Audio=window.AudioContext||window.webkitAudioContext;
- if(!Audio)return;
- if(!audio)audio=new Audio();
- if(audio.state==="suspended")audio.resume();
- const osc=audio.createOscillator();
- const gain=audio.createGain();
- osc.type="triangle";
- osc.frequency.value=440*Math.pow(2,(midi-69)/12);
- gain.gain.setValueAtTime(.0001,audio.currentTime);
- gain.gain.exponentialRampToValueAtTime(.16,audio.currentTime+.015);
- gain.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+.65);
- osc.connect(gain);gain.connect(audio.destination);
- osc.start();osc.stop(audio.currentTime+.7);
+const noteNames = [
+  "C","C#","D","D#","E","F",
+  "F#","G","G#","A","A#","B"
+];
+
+function getNote(midi) {
+  return noteNames[midi % 12] +
+    (Math.floor(midi / 12) - 1);
 }
 
-function render(){
- document.getElementById("songTitle").textContent=song.title;
- document.getElementById("level").textContent=song.level;
- document.getElementById("tab").textContent=song.tab;
- document.getElementById("bar").style.width="0%";
- document.getElementById("noteInfo").textContent="Ready";
+function sound(midi) {
+  const Audio = window.AudioContext ||
+                window.webkitAudioContext;
+
+  if (!Audio) return;
+
+  if (!audio) audio = new Audio();
+
+  if (audio.state === "suspended") audio.resume();
+
+  const osc = audio.createOscillator();
+  const gain = audio.createGain();
+
+  osc.type = "triangle";
+  osc.frequency.value =
+    440 * Math.pow(2, (midi - 69) / 12);
+
+  gain.gain.setValueAtTime(.0001, audio.currentTime);
+  gain.gain.exponentialRampToValueAtTime(
+    .15, audio.currentTime + .02
+  );
+  gain.gain.exponentialRampToValueAtTime(
+    .0001, audio.currentTime + .65
+  );
+
+  osc.connect(gain);
+  gain.connect(audio.destination);
+
+  osc.start();
+  osc.stop(audio.currentTime + .7);
 }
 
-function play(){
- if(playing)return;
- if(index>=song.notes.length)index=0;
- playing=true;
- document.getElementById("noteInfo").textContent="Playing";
- timer=setInterval(()=>{
-  if(index>=song.notes.length){pause();return;}
-  sound(song.notes[index]);
-  index++;total++;
-  document.getElementById("count").textContent=total+" notes";
-  document.getElementById("noteInfo").textContent=index+"/"+song.notes.length;
-  document.getElementById("bar").style.width=
-   (index/song.notes.length*100)+"%";
-  document.getElementById("progressText").textContent=
-   "Completed "+index+" of "+song.notes.length+" notes";
- },60000/Number(document.getElementById("tempo").value));
+function render() {
+  document.getElementById("songTitle").textContent =
+    song.title;
+
+  document.getElementById("level").textContent =
+    song.level;
+
+  document.getElementById("tab").textContent =
+    "e| " + song.notes.map(n => n - 64).join("---") + " |";
+
+  document.getElementById("noteInfo").textContent =
+    "Ready";
+
+  document.getElementById("bar").style.width = "0%";
+  highlightFret(-1);
 }
 
-function pause(){
- clearInterval(timer);playing=false;
- document.getElementById("noteInfo").textContent="Paused";
+function highlightFret(fret) {
+  document.querySelectorAll(".fret").forEach((btn, i) => {
+    btn.classList.toggle("selected", i === fret);
+  });
 }
 
-function reset(){
- pause();index=0;
- document.getElementById("bar").style.width="0%";
- document.getElementById("noteInfo").textContent="Ready";
+function play() {
+  if (playing) return;
+
+  if (index >= song.notes.length) index = 0;
+
+  playing = true;
+
+  function nextNote() {
+    if (!playing) return;
+
+    if (index >= song.notes.length) {
+      pause();
+      return;
+    }
+
+    const midi = song.notes[index];
+    const fret = midi - 64;
+
+    sound(midi);
+    highlightFret(fret);
+
+    document.getElementById("noteInfo").textContent =
+      getNote(midi) + " • Fret " + fret;
+
+    document.getElementById("fretInfo").textContent =
+      "High E string • Fret " + fret +
+      " • " + getNote(midi);
+
+    index++;
+    total++;
+
+    document.getElementById("count").textContent =
+      total + " notes";
+
+    document.getElementById("bar").style.width =
+      (index / song.notes.length * 100) + "%";
+
+    document.getElementById("progressText").textContent =
+      "Completed " + index + " / " +
+      song.notes.length + " notes";
+
+    timer = setTimeout(
+      nextNote,
+      60000 / Number(document.getElementById("tempo").value)
+    );
+  }
+
+  nextNote();
 }
 
-function changeTempo(){
- document.getElementById("bpm").textContent=
- document.getElementById("tempo").value+" BPM";
- if(playing){pause();play();}
-}
-function changeBpm(n){
- const el=document.getElementById("tempo");
- el.value=Math.max(40,Math.min(160,Number(el.value)+n));
- changeTempo();
+function pause() {
+  playing = false;
+  clearTimeout(timer);
 }
 
-document.getElementById("song").onchange=function(){
- pause();index=0;
- song=songs[this.value];render();
+function reset() {
+  pause();
+  index = 0;
+  render();
+}
+
+function changeTempo() {
+  document.getElementById("bpm").textContent =
+    document.getElementById("tempo").value + " BPM";
+
+  if (playing) {
+    pause();
+    play();
+  }
+}
+
+function changeBpm(n) {
+  const el = document.getElementById("tempo");
+
+  el.value = Math.max(
+    40,
+    Math.min(160, Number(el.value) + n)
+  );
+
+  changeTempo();
+}
+
+document.getElementById("song").onchange = function() {
+  pause();
+  index = 0;
+  song = songs[this.value];
+  render();
 };
 
-const board=document.getElementById("frets");
-for(let fret=0;fret<=12;fret++){
- const btn=document.createElement("button");
- btn.className="fret";
- btn.textContent=fret;
- btn.onclick=()=>{
-  document.querySelectorAll(".fret").forEach(x=>x.classList.remove("selected"));
-  btn.classList.add("selected");
-  sound(64+fret);
-  document.getElementById("fretInfo").textContent=
-   "High E string · Fret "+fret;
- };
- board.appendChild(btn);
+const board = document.getElementById("frets");
+
+board.innerHTML = "";
+
+for (let fret = 0; fret <= 12; fret++) {
+  const btn = document.createElement("button");
+
+  const midi = 64 + fret;
+
+  btn.className = "fret";
+  btn.textContent = fret + " " + getNote(midi);
+
+  btn.onclick = () => {
+    pause();
+    highlightFret(fret);
+    sound(midi);
+
+    document.getElementById("fretInfo").textContent =
+      "High E string • Fret " + fret +
+      " • " + getNote(midi);
+  };
+
+  board.appendChild(btn);
 }
+
 render();
+
+ 
+
+
 </script>
 </body>
 </html>
