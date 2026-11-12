@@ -1,0 +1,715 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0d1117">
+<title>MelodyGuitar 6.3</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{color-scheme:dark}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at top,#172333,#0d1117 55%,#080b10);color:#eaf2ff;min-height:100vh}
+header{padding:18px;text-align:center;border-bottom:1px solid #273446;background:#080c12}
+header h1{font-size:24px}header p{margin-top:6px;color:#91a4bd;font-size:13px}
+.container{max-width:1100px;margin:auto;padding:18px}
+.panel{background:rgba(18,26,38,.92);border:1px solid #29384c;border-radius:18px;padding:16px;margin-bottom:16px}
+.section-title{font-size:14px;color:#9eb2ca;margin-bottom:10px;text-transform:uppercase;letter-spacing:.8px}
+select,button,input[type=range]{width:100%}
+select{background:#111a27;color:white;border:1px solid #34455d;padding:12px;border-radius:10px}
+.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+button{border:0;border-radius:10px;padding:12px;background:#24344b;color:white;font-weight:600;cursor:pointer}
+button.primary{background:#246b46}
+.info{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.info-card{background:#111a27;border:1px solid #2b3a50;padding:11px;border-radius:10px}
+.info-card span{display:block;font-size:11px;color:#8195ad}
+.info-card strong{display:block;margin-top:4px}
+label{font-size:13px;color:#b6c6d9}
+input[type=range]{margin-top:8px;accent-color:#63e6ff}
+.check{display:flex;gap:9px;align-items:center;margin-top:12px}
+.check input{width:auto}
+.range-row{margin-top:12px}
+.fretboard-wrap,.tab{overflow-x:auto;padding-bottom:5px}
+.fretboard{min-width:1280px;background:#171c21;border:2px solid #59616a;border-radius:8px;overflow:hidden}
+.string-row{display:grid;grid-template-columns:55px repeat(23,minmax(48px,1fr));min-height:43px;border-bottom:1px solid #3d464e}
+.string-name{display:flex;align-items:center;justify-content:center;background:#11161b;color:#aebdca;font-weight:bold;border-right:1px solid #39434d}
+.fret{position:relative;border-right:1px solid #343d46;display:flex;align-items:center;justify-content:center;min-width:48px}
+.fret-number{position:absolute;top:2px;right:4px;font-size:8px;color:#66727e}
+.string-line{position:absolute;left:0;right:0;height:2px;background:#b5b9bd;opacity:.8}
+.note-dot{position:relative;z-index:2;width:26px;height:26px;border-radius:50%;background:#2fb36c;display:flex;align-items:center;justify-content:center;font-size:10px;color:#07140d;font-weight:bold}
+.note-dot.bass{background:#f2b84b;color:#221500}
+.note-dot.melody{background:#63e6ff;color:#00141a}
+.tab-grid{min-width:max-content;background:#0d131b;border:1px solid #29384c;border-radius:10px;overflow:hidden}
+.tab-row{display:grid;grid-template-columns:34px repeat(var(--events),26px);min-height:25px;align-items:center;border-bottom:1px solid #1e2936}
+.tab-string{color:#7f91a7;font-weight:bold;text-align:center;background:#111923}
+.tab-cell{text-align:center;color:#dce8f7;font-family:monospace;font-size:11px}
+.tab-cell.active{color:#63e6ff;font-weight:bold}
+.tab-cell.bass-active{color:#f2b84b;font-weight:bold}
+.status{text-align:center;padding:12px;border-radius:10px;background:#111a27;color:#8fa4bd;font-size:13px}
+.status.playing{color:#6de6a1}
+.status.error{color:#ff8b8b}
+.note-display{text-align:center;font-size:28px;font-weight:bold;margin:8px 0}
+.small{font-size:12px;color:#8195ad;text-align:center;margin-top:5px}
+.sound-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:700px){
+.controls{grid-template-columns:repeat(2,1fr)}
+.info{grid-template-columns:repeat(2,1fr)}
+header h1{font-size:20px}
+.sound-grid{grid-template-columns:1fr}
+.container{padding:10px}
+.panel{padding:13px}
+}
+</style>
+</head>
+<body>
+<header>
+<h1>🎸 MelodyGuitar 6.3</h1>
+<p>Fingerstyle • Melody + Bass • Enhanced Acoustic String Engine</p>
+</header>
+
+<main class="container">
+
+<section class="panel">
+<div class="section-title">Song</div>
+<select id="songSelect">
+<option value="canon">Canon in D — Opening 16 Bars</option>
+</select>
+<div class="info">
+<div class="info-card"><span>Composer</span><strong>J. Pachelbel</strong></div>
+<div class="info-card"><span>Key</span><strong>D Major</strong></div>
+<div class="info-card"><span>Time</span><strong>4/4</strong></div>
+<div class="info-card"><span>Tuning</span><strong>E A D G B e</strong></div>
+</div>
+<div class="small">Standard tuning • 23 fret positions</div>
+</section>
+
+<section class="panel">
+<div class="section-title">Playback</div>
+<div class="controls">
+<button id="playBtn" class="primary">▶ Play</button>
+<button id="pauseBtn">⏸ Pause</button>
+<button id="resetBtn">↺ Reset</button>
+<button id="slowBtn">🐢 Slow</button>
+</div>
+<div class="range-row">
+<label>Tempo: <strong id="tempoValue">60 BPM</strong></label>
+<input id="tempo" type="range" min="35" max="110" value="60">
+</div>
+<label class="check"><input type="checkbox" id="repeat"> Auto Repeat</label>
+<label class="check"><input type="checkbox" id="sectionLoop"> Repeat 4-bar section</label>
+</section>
+
+<section class="panel">
+<div class="section-title">Sound Settings</div>
+<div class="sound-grid">
+<div>
+<label>Master Volume</label>
+<input id="volume" type="range" min="0" max="1" step="0.01" value="0.75">
+</div>
+<div>
+<label>String Brightness</label>
+<input id="brightness" type="range" min="0.94" max="0.999" step="0.001" value="0.986">
+</div>
+</div>
+<label class="check"><input type="checkbox" id="metronome"> Metronome ON</label>
+<label class="check"><input type="checkbox" id="melodyBoost" checked> Melody Emphasis</label>
+<div class="small">Synthesized acoustic guitar sound • Headphones recommended</div>
+</section>
+
+<section class="panel">
+<div class="section-title">Current Note</div>
+<div id="noteDisplay" class="note-display">—</div>
+<div id="noteDetail" class="small">Press Play</div>
+</section>
+
+<section class="panel">
+<div class="section-title">Six-string Fretboard (frets 0–22)</div>
+<div class="fretboard-wrap">
+<div id="fretboard" class="fretboard"></div>
+</div>
+</section>
+
+<section class="panel">
+<div class="section-title">Guitar TAB</div>
+<div class="tab">
+<div id="tab" class="tab-grid"></div>
+</div>
+</section>
+
+<div id="status" class="status">Ready</div>
+</main>
+
+<script>
+'use strict';
+
+const strings=[
+{name:'E',midi:40},
+{name:'A',midi:45},
+{name:'D',midi:50},
+{name:'G',midi:55},
+{name:'B',midi:59},
+{name:'e',midi:64}
+];
+
+const MAX_FRET=22;
+const noteNames=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+
+function midiToName(midi){
+return noteNames[((midi%12)+12)%12]+(Math.floor(midi/12)-1);
+}
+
+function nameToMidi(name){
+const m=name.match(/^([A-G])(#?)(-?\d+)$/);
+if(!m)throw new Error('Invalid note: '+name);
+const base={C:0,D:2,E:4,F:5,G:7,A:9,B:11};
+return (parseInt(m[3],10)+1)*12+base[m[1]]+(m[2]?1:0);
+}
+
+/* Canon in D practice sequence */
+const canonBars=[
+{bass:'D3',melody:['F#5','E5','D5','C#5']},
+{bass:'A2',melody:['B4','A4','B4','C#5']},
+{bass:'B2',melody:['D5','C#5','B4','A4']},
+{bass:'F#2',melody:['G4','F#4','G4','E4']},
+{bass:'G2',melody:['D4','F#4','A4','G4','F#4','D4','F#4','E4']},
+{bass:'D3',melody:['D4','B3','D4','A4','G4','B4','A4','G4']},
+{bass:'G2',melody:['F#4','D4','E4','C#5','D5','F#5','A5','A4']},
+{bass:'A2',melody:['B4','G4','A4','F#4','D4','D5','D5','C#5']},
+{bass:'D3',melody:['D5','C#5','D5','D4','C#4','A4','E4','F#4']},
+{bass:'A2',melody:['D4','D5','C#5','B4','C#5','F#5','A5','B5']},
+{bass:'B2',melody:['G5','F#5','E5','G5','F#5','E5','D5','C#5','B4','A4','G4','F#4','E4','G4','F#4','E4']},
+{bass:'F#2',melody:['D4','E4','F#4','G4','A4','E4','A4','G4','F#4','B4','A4','G4','A4','G4','F#4','E4']},
+{bass:'G2',melody:['D4','B3','B4','C#5','D5','C#5','B4','A4','G4','F#4','E4','B4','A4','B4','A4','G4']},
+{bass:'D3',melody:['F#4','F#5','E5','D5','F#5','B5','A5','B5']},
+{bass:'G2',melody:['C#6','B5','A5','G5']},
+{bass:'A2',melody:['F#5','E5','D5','C#5']}
+];
+
+function findGuitarPosition(midi,role){
+const candidates=[];
+strings.forEach((s,index)=>{
+const fret=midi-s.midi;
+if(fret>=0&&fret<=MAX_FRET){
+candidates.push({string:index,fret,midi});
+}
+});
+if(!candidates.length)return null;
+if(role==='bass'){
+return candidates.sort((a,b)=>a.string-b.string)[0];
+}
+return candidates.sort((a,b)=>{
+const pa=a.string>=3?0:1;
+const pb=b.string>=3?0:1;
+return pa-pb||a.fret-b.fret;
+})[0];
+}
+
+let events=[];
+
+function buildEvents(){
+events=[];
+let beat=0;
+
+canonBars.forEach((bar,barIndex)=>{
+const noteBeat=4/bar.melody.length;
+
+for(let i=0;i<bar.melody.length;i++){
+const notes=[];
+const name=bar.melody[i];
+const midi=nameToMidi(name);
+const pos=findGuitarPosition(midi,'melody');
+
+if(pos){
+notes.push({
+midi,name,role:'melody',
+duration:noteBeat,
+string:pos.string,
+fret:pos.fret
+});
+}
+
+if(i===0){
+const bassMidi=nameToMidi(bar.bass);
+const bassPos=findGuitarPosition(bassMidi,'bass');
+
+if(bassPos){
+notes.push({
+midi:bassMidi,
+name:bar.bass,
+role:'bass',
+duration:4,
+string:bassPos.string,
+fret:bassPos.fret
+});
+}
+}
+
+events.push({
+beat,
+duration:noteBeat,
+bar:barIndex+1,
+notes
+});
+
+beat+=noteBeat;
+}
+});
+}
+
+function setStatus(message,error=false){
+const el=document.getElementById('status');
+el.textContent=message;
+el.className='status'+
+(error?' error':message.includes('Playing')?' playing':'');
+}
+
+function validateEvents(){
+const errors=[];
+
+events.forEach((event,i)=>{
+event.notes.forEach(n=>{
+if(strings[n.string].midi+n.fret!==n.midi){
+errors.push({event:i,note:n.name});
+}
+});
+});
+
+if(errors.length){
+console.error(errors);
+setStatus('ERROR: Pitch/TAB mismatch',true);
+return false;
+}
+
+console.info('Pitch/TAB validation PASS',events.length,'events');
+return true;
+}
+
+function createFretboard(){
+const board=document.getElementById('fretboard');
+board.innerHTML='';
+
+strings.forEach((s,index)=>{
+const row=document.createElement('div');
+row.className='string-row';
+
+const label=document.createElement('div');
+label.className='string-name';
+label.textContent=s.name;
+row.appendChild(label);
+
+for(let fret=0;fret<=MAX_FRET;fret++){
+const cell=document.createElement('div');
+cell.className='fret';
+cell.dataset.string=index;
+cell.dataset.fret=fret;
+
+const number=document.createElement('div');
+number.className='fret-number';
+number.textContent=fret;
+cell.appendChild(number);
+
+const line=document.createElement('div');
+line.className='string-line';
+cell.appendChild(line);
+
+row.appendChild(cell);
+}
+
+board.appendChild(row);
+});
+}
+
+function clearFretboard(){
+document.querySelectorAll('.note-dot').forEach(el=>el.remove());
+}
+
+function highlightEvent(event){
+clearFretboard();
+
+event.notes.forEach(n=>{
+const cell=document.querySelector(
+`.fret[data-string="${n.string}"][data-fret="${n.fret}"]`
+);
+if(!cell)return;
+
+const dot=document.createElement('div');
+dot.className='note-dot '+n.role;
+dot.textContent=n.fret;
+cell.appendChild(dot);
+});
+}
+
+function createTab(){
+const tab=document.getElementById('tab');
+tab.innerHTML='';
+tab.style.setProperty('--events',events.length);
+
+for(let s=0;s<6;s++){
+const row=document.createElement('div');
+row.className='tab-row';
+
+const label=document.createElement('div');
+label.className='tab-string';
+label.textContent=strings[s].name;
+row.appendChild(label);
+
+events.forEach((event,i)=>{
+const cell=document.createElement('div');
+cell.className='tab-cell';
+
+const n=event.notes.find(note=>note.string===s);
+cell.textContent=n?String(n.fret):'·';
+cell.dataset.event=i;
+row.appendChild(cell);
+});
+
+tab.appendChild(row);
+}
+}
+
+function highlightTab(index){
+document.querySelectorAll('.tab-cell').forEach(c=>{
+c.classList.remove('active','bass-active');
+});
+
+document.querySelectorAll(
+`.tab-cell[data-event="${index}"]`
+).forEach(cell=>{
+const row=strings.findIndex(
+s=>s.name===cell.parentElement.children[0].textContent
+);
+const n=events[index].notes.find(note=>note.string===row);
+
+if(n){
+cell.classList.add(
+n.role==='bass'?'bass-active':'active'
+);
+}
+});
+}
+
+/* AUDIO ENGINE */
+let audioContext=null;
+let masterGain=null;
+let bodyBus=null;
+let isPlaying=false;
+let isPaused=false;
+let currentEvent=0;
+let playToken=0;
+let currentBPM=60;
+let scheduledTimer=null;
+
+function initAudio(){
+if(!audioContext){
+const AC=window.AudioContext||window.webkitAudioContext;
+if(!AC)throw new Error('Web Audio API not supported');
+
+audioContext=new AC();
+
+masterGain=audioContext.createGain();
+masterGain.gain.value=Number(
+document.getElementById('volume').value
+);
+
+bodyBus=audioContext.createGain();
+bodyBus.gain.value=.8;
+bodyBus.connect(masterGain);
+masterGain.connect(audioContext.destination);
+}
+
+if(audioContext.state==='suspended'){
+return audioContext.resume();
+}
+
+return Promise.resolve();
+}
+
+/* Fractional-delay Karplus-Strong */
+function createPluckBuffer(
+frequency,duration,brightness,pickPosition
+){
+const sr=audioContext.sampleRate;
+const length=Math.max(1,Math.floor(duration*sr));
+const buffer=audioContext.createBuffer(1,length,sr);
+const out=buffer.getChannelData(0);
+
+const delay=sr/frequency;
+const size=Math.ceil(delay)+3;
+const ring=new Float32Array(size);
+
+for(let i=0;i<size;i++){
+ring[i]=(Math.random()*2-1)*.75;
+}
+
+const pick=Math.max(1,Math.floor(delay*pickPosition));
+
+for(let i=0;i<size;i++){
+const j=(i+pick)%size;
+ring[i]-=ring[j]*.22;
+}
+
+let write=0;
+let last=0;
+
+const damping=Math.min(.9995,Math.max(.94,brightness));
+
+for(let i=0;i<length;i++){
+let readPos=(write-delay)%size;
+if(readPos<0)readPos+=size;
+
+const i0=Math.floor(readPos);
+const frac=readPos-i0;
+const i1=(i0+1)%size;
+
+const delayed=ring[i0]*(1-frac)+ring[i1]*frac;
+const value=(delayed+last)*.5*damping;
+
+last=value;
+ring[write]=value;
+out[i]=value;
+write=(write+1)%size;
+}
+
+return buffer;
+}
+
+function playString(note){
+const frequency=440*Math.pow(2,(note.midi-69)/12);
+const isBass=note.role==='bass';
+const beatSeconds=60/currentBPM;
+
+const duration=Math.max(
+isBass?1.1:.42,
+note.duration*beatSeconds*(isBass?1.7:1.35)
+);
+
+const source=audioContext.createBufferSource();
+const brightness=Number(
+document.getElementById('brightness').value
+);
+
+source.buffer=createPluckBuffer(
+frequency,
+duration,
+brightness-(isBass?.008:0),
+isBass?.105:.19
+);
+
+const tone=audioContext.createBiquadFilter();
+tone.type='lowpass';
+tone.frequency.value=isBass?1900:Math.min(9500,frequency*8+1200);
+tone.Q.value=.45;
+
+const body1=audioContext.createBiquadFilter();
+body1.type='peaking';
+body1.frequency.value=isBass?115:185;
+body1.Q.value=.85;
+body1.gain.value=isBass?2.8:2.0;
+
+const body2=audioContext.createBiquadFilter();
+body2.type='peaking';
+body2.frequency.value=isBass?250:430;
+body2.Q.value=1.05;
+body2.gain.value=isBass?1.2:1.5;
+
+const main=audioContext.createGain();
+const resonance=audioContext.createGain();
+
+let volume=isBass?.38:.52;
+
+if(note.role==='melody'&&
+document.getElementById('melodyBoost').checked){
+volume*=1.25;
+}
+
+const now=audioContext.currentTime;
+
+main.gain.setValueAtTime(.0001,now);
+main.gain.linearRampToValueAtTime(volume,now+.008);
+main.gain.exponentialRampToValueAtTime(.0001,now+duration);
+
+resonance.gain.setValueAtTime(.0001,now);
+resonance.gain.linearRampToValueAtTime(volume*.13,now+.018);
+resonance.gain.exponentialRampToValueAtTime(
+.0001,now+Math.min(duration,2.4)
+);
+
+source.connect(tone);
+tone.connect(main);
+main.connect(masterGain);
+
+source.connect(body1);
+body1.connect(body2);
+body2.connect(resonance);
+resonance.connect(bodyBus);
+
+source.start(now);
+source.stop(now+duration);
+}
+
+function playMetronome(){
+if(!document.getElementById('metronome').checked)return;
+
+const osc=audioContext.createOscillator();
+const gain=audioContext.createGain();
+const now=audioContext.currentTime;
+
+osc.frequency.value=
+(Math.floor(events[currentEvent].beat)%4===0)?1250:850;
+
+gain.gain.setValueAtTime(.0001,now);
+gain.gain.exponentialRampToValueAtTime(.10,now+.004);
+gain.gain.exponentialRampToValueAtTime(.0001,now+.055);
+
+osc.connect(gain);
+gain.connect(masterGain);
+
+osc.start(now);
+osc.stop(now+.06);
+}
+
+function playEvent(event,index){
+event.notes.forEach(playString);
+
+highlightEvent(event);
+highlightTab(index);
+
+const melody=event.notes.find(n=>n.role==='melody');
+
+if(melody){
+document.getElementById('noteDisplay').textContent=melody.name;
+
+document.getElementById('noteDetail').textContent=
+`String ${melody.string+1} • Fret ${melody.fret} • MIDI ${melody.midi} • Bar ${event.bar}`;
+}
+
+setStatus(`Playing • Bar ${event.bar}`);
+}
+
+function stepDuration(){
+return 60000/currentBPM;
+}
+
+function scheduleNext(token){
+if(token!==playToken||!isPlaying)return;
+
+if(currentEvent>=events.length){
+if(document.getElementById('repeat').checked){
+currentEvent=0;
+}else{
+isPlaying=false;
+setStatus('Finished — Canon in D opening 16 bars');
+return;
+}
+}
+
+playMetronome();
+
+const event=events[currentEvent];
+playEvent(event,currentEvent);
+
+const wait=event.duration*stepDuration();
+currentEvent++;
+
+if(
+document.getElementById('sectionLoop').checked&&
+currentEvent>0&&
+events[currentEvent-1].bar===4&&
+currentEvent<events.length
+){
+currentEvent=0;
+}
+
+scheduledTimer=setTimeout(
+()=>scheduleNext(token),wait
+);
+}
+
+async function play(){
+try{
+await initAudio();
+
+if(isPlaying)return;
+
+isPlaying=true;
+isPaused=false;
+playToken++;
+
+scheduleNext(playToken);
+
+}catch(err){
+console.error(err);
+setStatus('Audio error: '+err.message,true);
+}
+}
+
+function pause(){
+if(!isPlaying)return;
+
+isPlaying=false;
+isPaused=true;
+playToken++;
+
+if(scheduledTimer)clearTimeout(scheduledTimer);
+
+setStatus(`Paused • Next event ${currentEvent+1}`);
+}
+
+function reset(){
+isPlaying=false;
+isPaused=false;
+playToken++;
+
+if(scheduledTimer)clearTimeout(scheduledTimer);
+
+currentEvent=0;
+clearFretboard();
+
+document.querySelectorAll('.tab-cell').forEach(c=>{
+c.classList.remove('active','bass-active');
+});
+
+document.getElementById('noteDisplay').textContent='—';
+document.getElementById('noteDetail').textContent='Press Play';
+
+setStatus('Ready — Canon in D • 16 bars');
+}
+
+function slowMode(){
+currentBPM=45;
+document.getElementById('tempo').value='45';
+document.getElementById('tempoValue').textContent='45 BPM';
+}
+
+/* CONTROLS */
+document.getElementById('playBtn').addEventListener('click',play);
+document.getElementById('pauseBtn').addEventListener('click',pause);
+document.getElementById('resetBtn').addEventListener('click',reset);
+document.getElementById('slowBtn').addEventListener('click',slowMode);
+
+document.getElementById('tempo').addEventListener('input',function(){
+currentBPM=Number(this.value);
+document.getElementById('tempoValue').textContent=currentBPM+' BPM';
+});
+
+document.getElementById('volume').addEventListener('input',function(){
+if(masterGain){
+masterGain.gain.setTargetAtTime(
+Number(this.value),
+audioContext.currentTime,
+.02
+);
+}
+});
+
+/* INITIALIZE */
+buildEvents();
+createFretboard();
+createTab();
+
+if(validateEvents()){
+setStatus('Ready — Pitch/TAB validation PASS • 16 bars');
+}
+</script>
+</body>
+</html>
